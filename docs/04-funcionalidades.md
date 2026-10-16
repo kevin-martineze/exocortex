@@ -16,7 +16,7 @@ Esta sección manda sobre las demás: si una funcionalidad no permite copiar/exp
 ## Por proyecto
 
 - Estado/salud (activo, pausado, archivado) con indicador visual
-- Entornos (dev/staging/prod) con sus propios env vars y URLs
+- Entornos **con categorías libres** (no un enum fijo — QA, Testing, Pre-producción, Demo, etc., creadas sobre la marcha), cada uno con sus propios env vars y URL
 - Variables de entorno enmascaradas por defecto (mostrar/ocultar), nunca en texto plano en el preview
 - Enlaces rápidos: repo (GitHub/GitLab), tablero (Jira/Linear/Notion), CI/CD
 - Stack tecnológico (tags: Node, NestJS, React, Svelte, etc.)
@@ -24,6 +24,15 @@ Esta sección manda sobre las demás: si una funcionalidad no permite copiar/exp
 - Preview de código (navegar archivos sin clonar/abrir el editor)
 - Bitácora/notas tipo diario — decisiones, bloqueos, ideas sueltas
 - Diagrama de arquitectura (Markdown + Mermaid embebido)
+
+### Validado en prototipo interactivo — listo para implementar
+
+- **Comandos frecuentes** — ej. "levantar en local", "correr migraciones", cada uno copiable en un clic.
+- **Enlaces rápidos ad-hoc** — distintos de los 3 fijos (repo/board/cicd): Swagger, Grafana, Sentry, lo que aplique por proyecto.
+- **Advertencias fijadas ("no tocar sin leer esto")** — banner visible en cualquier pestaña de la vista de proyecto, distinto de la bitácora normal, para gotchas críticos que no se deben perder entre notas viejas.
+- **Dependencias críticas con versión fijada** — nombre + versión + razón (ej. "Node 20.x, no subir a 22: breaking change en el ORM").
+- **Checklist de deploy** — pasos con checkbox antes de pushear a producción, visible en la vista de proyecto.
+- **Health-check / estado del servicio** — indicador de si el servicio está operativo o caído, de un vistazo en el header de la vista de proyecto.
 
 ## Transversal (toda la app)
 
