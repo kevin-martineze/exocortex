@@ -6,11 +6,11 @@
 
 	let { project, onclose } = $props();
 
-	const cluster = CLUSTERS[project.cluster];
-	const status = STATUS[project.status];
+	let cluster = $derived(CLUSTERS[project.cluster]);
+	let status = $derived(STATUS[project.status]);
 
-	const firstEnv = project.environments?.find((e) => e.vars?.length);
-	const varRows = firstEnv ? firstEnv.vars.slice(0, 2) : [];
+	let firstEnv = $derived(project.environments?.find((e) => e.vars?.length));
+	let varRows = $derived(firstEnv ? firstEnv.vars.slice(0, 2) : []);
 
 	function copyNotes() {
 		copyText(project.notes ?? '', 'Notas');

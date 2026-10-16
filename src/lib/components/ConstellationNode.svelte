@@ -3,32 +3,39 @@
 
 	let { project, selected = false, variant = 0, onclick } = $props();
 
-	const cluster = CLUSTERS[project.cluster];
-	const accent = cluster.color;
-	const load = projectLoad(project);
+	let cluster = $derived(CLUSTERS[project.cluster]);
+	let accent = $derived(cluster.color);
+	let load = $derived(projectLoad(project));
 
 	// Misma fórmula que el prototipo: hasta 60% de blanco mezclado al tope de carga,
 	// un halo (box-shadow) que crece en blur/spread/alpha con la carga.
-	const loadPct = Math.round((load / 10) * 60);
-	const coreColor = `color-mix(in srgb, ${accent} ${100 - loadPct}%, #ffffff ${loadPct}%)`;
-	const glowBlur = 14 + load * 5;
-	const glowSpread = 1 + Math.round(load * 0.7);
-	const glowAlphaHex = Math.round((0.3 + load * 0.045) * 255)
-		.toString(16)
-		.padStart(2, '0');
+	let loadPct = $derived(Math.round((load / 10) * 60));
+	let coreColor = $derived(`color-mix(in srgb, ${accent} ${100 - loadPct}%, #ffffff ${loadPct}%)`);
+	let glowBlur = $derived(14 + load * 5);
+	let glowSpread = $derived(1 + Math.round(load * 0.7));
+	let glowAlphaHex = $derived(
+		Math.round((0.3 + load * 0.045) * 255)
+			.toString(16)
+			.padStart(2, '0')
+	);
 
-	const radius = project.role === 'director' ? 42 : 36;
-	const coreBg = `radial-gradient(circle at 32% 28%, ${coreColor}, ${accent}55 60%, ${accent}22 100%)`;
+	let radius = $derived(project.role === 'director' ? 42 : 36);
+	let coreBg = $derived(
+		`radial-gradient(circle at 32% 28%, ${coreColor}, ${accent}55 60%, ${accent}22 100%)`
+	);
 
-	let shadow = `0 0 ${glowBlur}px ${glowSpread}px ${accent}${glowAlphaHex}`;
-	if (project.locked) {
-		shadow = `0 0 0 3px #05060c, 0 0 0 5px #e06a6a, ${shadow}`;
-	}
-	if (selected) {
-		shadow += `, 0 0 0 2px ${accent}`;
-	}
+	let shadow = $derived.by(() => {
+		let s = `0 0 ${glowBlur}px ${glowSpread}px ${accent}${glowAlphaHex}`;
+		if (project.locked) {
+			s = `0 0 0 3px #05060c, 0 0 0 5px #e06a6a, ${s}`;
+		}
+		if (selected) {
+			s += `, 0 0 0 2px ${accent}`;
+		}
+		return s;
+	});
 
-	const floatClass = ['float-a', 'float-b', 'float-c'][variant % 3];
+	let floatClass = $derived(['float-a', 'float-b', 'float-c'][variant % 3]);
 </script>
 
 <button
