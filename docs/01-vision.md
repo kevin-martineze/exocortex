@@ -15,5 +15,5 @@ Es, en esencia, un segundo cerebro (de ahí el nombre **Exocortex**) enfocado en
 - **Intuitivo antes que exhaustivo.** Si hay que pensar cómo navegar, ya falló.
 - **Se alimenta con el tiempo.** No se llena todo de una vez; crece proyecto por proyecto.
 - **Personal primero.** Es una herramienta para un solo usuario (Kevin), no un producto multiusuario desde el día uno.
-- **Seguridad de secretos por defecto.** Si va a mostrar variables de entorno reales, el riesgo de exposición debe resolverse en el diseño, no como ocurrencia tardía.
+- **Seguridad de secretos por defecto.** Si va a mostrar variables de entorno reales, el riesgo de exposición debe resolverse en el diseño, no como ocurrencia tardía. Con acceso remoto desde cualquier dispositivo (ver [estructura](03-estructura.md)), esto significa cifrado de extremo a extremo: el backend nunca ve los secretos en claro.
 - **Copiar y exportar es de primera clase.** Entrar a la mente y no poder sacar lo que necesitas (una credencial, un doc, un proyecto completo) de forma inmediata es un fallo del producto, no un detalle pendiente. Cada pieza de información debe poder copiarse o exportarse en uno o dos clics.
