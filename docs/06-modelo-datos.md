@@ -51,13 +51,13 @@ Patrón tipo Bitwarden: la misma passphrase deriva **dos** valores distintos —
 ```
 
 ### `environments`
-Entornos por proyecto (dev/staging/prod), cada uno con su propia URL y sus propios secretos.
+Entornos por proyecto — **categorías libres, no un enum fijo**. Dev/Staging/Prod son solo ejemplos; cada proyecto puede tener las que necesite (QA, Testing, Pre-producción, Demo, Sandbox de un cliente, etc.), creadas sobre la marcha desde la pestaña de variables de entorno.
 
 ```
 {
   _id,
   projectId,
-  name: "dev" | "staging" | "prod",
+  name: String,   // texto libre, ej. "QA", "Pre-producción" — sin lista cerrada
   url,
   createdAt
 }

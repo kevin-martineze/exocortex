@@ -2,6 +2,8 @@
 
 > Un segundo cerebro para centralizar todos tus proyectos — personales y de trabajo — en un solo lugar intuitivo.
 
+**Este repo es el frontend (SvelteKit)** y concentra también toda la documentación de planeación del proyecto. El backend (NestJS) vive en un repo separado: [exocortex-api](https://github.com/kevin-martineze/exocortex-api).
+
 **Estado: 🧭 en planeación.** Alcance, stack técnico y modelo de datos definidos. Próximo: arrancar la implementación.
 
 ## Documentación
@@ -15,4 +17,4 @@
 
 ## Próximo paso
 
-Arrancar la implementación: scaffolding de `exocortex-api` (NestJS) y `exocortex-web` (SvelteKit).
+Arrancar la implementación: scaffolding del backend en `exocortex-api` y del frontend en este repo.

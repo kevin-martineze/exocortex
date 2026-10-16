@@ -11,7 +11,9 @@
 
 ## Arquitectura y patrones
 
-- **Repos separados.** `exocortex-web` (SvelteKit) y `exocortex-api` (NestJS) independientes, no monorepo. Los tipos/DTOs compartidos se sincronizan a mano o se publican como paquete si llega a doler.
+- **Repos separados.** No monorepo. Los tipos/DTOs compartidos se sincronizan a mano o se publican como paquete si llega a doler.
+  - **Frontend (SvelteKit):** este mismo repo — [exocortex](https://github.com/kevin-martineze/exocortex).
+  - **Backend (NestJS):** [exocortex-api](https://github.com/kevin-martineze/exocortex-api).
 - **Backend: monolito modular por dominio.** Un módulo Nest por dominio (`AuthModule`, `ProjectsModule`, `SecretsModule`, `DocsModule`, `GithubModule`), cada uno con capas Controller → Service → Repository. El Repository envuelve los schemas de Mongoose, aislando la persistencia.
 - **Validación:** DTOs + `class-validator`.
 - **API: REST.** Sin GraphQL — un solo frontend consumidor (propio) no justifica la complejidad de un schema GraphQL.
