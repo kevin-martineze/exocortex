@@ -3,8 +3,8 @@
 // extendida con commands / quickLinks / codeFiles que aún no están en ese doc.
 
 export const CLUSTERS = {
-	personal: { label: 'Personal', color: '#4fd1c5' },
-	trabajo: { label: 'Trabajo formal', color: '#e0935a' }
+	personal: { label: 'Personal', color: '#4fd1c5', labelColor: '#9ce8de' },
+	trabajo: { label: 'Trabajo formal', color: '#e0935a', labelColor: '#f0b98b' }
 };
 
 export const STATUS = {
