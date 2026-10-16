@@ -22,7 +22,8 @@
 				x1: p.position.x,
 				y1: p.position.y,
 				x2: other.position.x,
-				y2: other.position.y
+				y2: other.position.y,
+				color: CLUSTERS[p.cluster].color
 			});
 		}
 	}
@@ -58,7 +59,7 @@
 	<main class="constellation">
 		<svg class="lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
 			{#each edges as e (e.key)}
-				<line x1={e.x1} y1={e.y1} x2={e.x2} y2={e.y2} />
+				<line x1={e.x1} y1={e.y1} x2={e.x2} y2={e.y2} stroke={e.color} />
 			{/each}
 		</svg>
 
@@ -145,9 +146,10 @@
 		height: 100%;
 	}
 	.lines line {
-		stroke: var(--text-faint);
-		stroke-width: 0.25;
-		opacity: 0.28;
+		stroke-width: 1.5px;
+		stroke-dasharray: 3 7;
+		stroke-opacity: 0.35;
+		vector-effect: non-scaling-stroke;
 	}
 	.cluster-label {
 		position: absolute;
