@@ -7,10 +7,17 @@
 
 	let project = $state(structuredClone(getProject(page.params.id)));
 
+	if (project) {
+		project.warnings ??= [];
+		project.dependencies ??= [];
+		project.checklist ??= [];
+	}
+
 	const TABS = [
 		{ id: 'docs', label: 'Docs' },
 		{ id: 'env', label: 'Variables de entorno' },
 		{ id: 'code', label: 'Preview de código' },
+		{ id: 'deploy', label: 'Deploy' },
 		{ id: 'notas', label: 'Notas' },
 		{ id: 'comandos', label: 'Comandos y enlaces' }
 	];
@@ -29,6 +36,8 @@
 	let activeFileId = $state(null);
 	let newEnvOpen = $state(false);
 	let newEnvName = $state('');
+	let warnOpen = $state(false);
+	let warnText = $state('');
 
 	let activeDoc = $derived(
 		project?.docs.find((d) => d.id === activeDocId) ?? project?.docs[0] ?? null
@@ -39,6 +48,7 @@
 	let notasMd = $derived(
 		(project?.bitacora ?? []).map((b) => `### ${b.date}\n\n${b.text}`).join('\n\n')
 	);
+	let doneCount = $derived((project?.checklist ?? []).filter((c) => c.done).length);
 
 	function selectTab(tab) {
 		activeTab = tab;
@@ -51,6 +61,14 @@
 		project.environments.push({ id: `env-${Date.now()}`, name, url: '', vars: [] });
 		newEnvName = '';
 		newEnvOpen = false;
+	}
+
+	function addWarning() {
+		const text = warnText.trim();
+		if (!text) return;
+		project.warnings.push({ id: `warn-${Date.now()}`, text });
+		warnText = '';
+		warnOpen = false;
 	}
 </script>
 
@@ -65,6 +83,12 @@
 					{#if project.role}<Badge label={ROLES[project.role]} />{/if}
 					<Badge label={STATUS[project.status].label} color={STATUS[project.status].color} />
 					{#if project.locked}<Badge label="Bloqueado" color="#e06a6a" />{/if}
+					{#if project.health}
+						<span class="health" class:down={!project.health.up}>
+							<span class="health-dot" aria-hidden="true"></span>
+							{project.health.up ? 'Operativo' : 'Caído'} · {project.health.lastChecked}
+						</span>
+					{/if}
 				</div>
 			</div>
 			<div class="add-wrap">
@@ -80,6 +104,33 @@
 				{/if}
 			</div>
 		</header>
+
+		<section class="warnings" aria-label="Advertencias fijadas">
+			<div class="warnings-head">
+				<span class="warnings-title">Advertencias fijadas</span>
+				<button class="btn btn-ghost small" onclick={() => (warnOpen = !warnOpen)}>+ Fijar advertencia</button>
+			</div>
+			{#if project.warnings.length}
+				<ul class="warnings-list">
+					{#each project.warnings as w (w.id)}
+						<li class="warning">⚠️ {w.text}</li>
+					{/each}
+				</ul>
+			{:else}
+				<p class="muted warnings-empty">Sin advertencias fijadas.</p>
+			{/if}
+			{#if warnOpen}
+				<div class="new-warning">
+					<input
+						class="input"
+						type="text"
+						placeholder="Advertencia (ej. no tocar X sin leer Y)"
+						bind:value={warnText}
+					/>
+					<button class="btn btn-primary" onclick={addWarning}>Agregar</button>
+				</div>
+			{/if}
+		</section>
 
 		<nav class="tabs" role="tablist">
 			{#each TABS as t}
@@ -218,6 +269,38 @@
 					{:else}
 						<p class="muted empty">Sin notas todavía.</p>
 					{/each}
+				</div>
+			{:else if activeTab === 'deploy'}
+				<div class="deploy-tab">
+					<section class="deploy-card">
+						<h2 class="pane-title">Dependencias críticas</h2>
+						{#each project.dependencies as dep (dep.id)}
+							<div class="dep">
+								<div class="dep-head">
+									<span class="dep-name">{dep.name}</span>
+									<span class="mono dep-version">{dep.version}</span>
+								</div>
+								<p class="dep-reason">{dep.reason}</p>
+							</div>
+						{:else}
+							<p class="muted empty">Sin dependencias críticas registradas.</p>
+						{/each}
+					</section>
+
+					<section class="deploy-card">
+						<div class="deploy-card-head">
+							<h2 class="pane-title">Checklist de deploy</h2>
+							<span class="muted">{doneCount} de {project.checklist.length} listos</span>
+						</div>
+						{#each project.checklist as c (c.id)}
+							<label class="check-item">
+								<input type="checkbox" bind:checked={c.done} />
+								<span class="check-text" class:done={c.done}>{c.text}</span>
+							</label>
+						{:else}
+							<p class="muted empty">Sin checklist registrado.</p>
+						{/each}
+					</section>
 				</div>
 			{:else}
 				<div class="comandos-tab">
@@ -540,6 +623,157 @@
 		color: var(--text-primary);
 	}
 
+	.health {
+		display: inline-flex;
+		align-items: center;
+		gap: 7px;
+		font-size: 12px;
+		font-weight: 500;
+		color: var(--text-secondary);
+		padding: 4px 10px;
+		border: 1px solid var(--border-panel);
+		border-radius: 999px;
+		background: var(--bg-panel);
+		white-space: nowrap;
+	}
+	.health-dot {
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+		background: var(--status-activo);
+		animation: pulse 2s ease-in-out infinite;
+	}
+	.health.down .health-dot {
+		background: var(--status-bloqueado);
+		animation: none;
+	}
+	@keyframes pulse {
+		0%,
+		100% {
+			box-shadow: 0 0 0 0 rgba(124, 197, 143, 0.6);
+		}
+		50% {
+			box-shadow: 0 0 0 5px rgba(124, 197, 143, 0);
+		}
+	}
+
+	.warnings {
+		margin-bottom: 20px;
+		padding: 14px 16px;
+		background: rgba(224, 106, 106, 0.1);
+		border: 1px solid rgba(224, 106, 106, 0.25);
+		border-left: 3px solid var(--status-bloqueado);
+		border-radius: var(--radius-md);
+	}
+	.warnings-head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+		margin-bottom: 8px;
+		flex-wrap: wrap;
+	}
+	.warnings-title {
+		font-size: 12px;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: #e88787;
+	}
+	.warnings-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+	}
+	.warning {
+		font-size: 14px;
+		color: var(--text-primary);
+		line-height: 1.5;
+	}
+	.warnings-empty {
+		font-size: 13px;
+	}
+	.new-warning {
+		display: flex;
+		gap: 10px;
+		margin-top: 12px;
+	}
+	.new-warning .input {
+		flex: 1;
+	}
+
+	.deploy-tab {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 20px;
+		align-items: start;
+	}
+	.deploy-card {
+		background: var(--bg-panel);
+		border: 1px solid var(--border-panel);
+		border-radius: var(--radius-lg);
+		padding: 18px 20px;
+	}
+	.deploy-card-head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+		margin-bottom: 14px;
+	}
+	.dep {
+		padding: 12px 0;
+		border-bottom: 1px solid var(--border-panel);
+	}
+	.dep:last-child {
+		border-bottom: none;
+	}
+	.dep-head {
+		display: flex;
+		align-items: baseline;
+		gap: 10px;
+	}
+	.dep-name {
+		font-size: 14px;
+		font-weight: 600;
+	}
+	.dep-version {
+		font-size: 12.5px;
+		color: var(--accent-personal);
+	}
+	.dep-reason {
+		margin: 4px 0 0;
+		font-size: 13px;
+		line-height: 1.5;
+		color: var(--text-secondary);
+	}
+	.check-item {
+		display: flex;
+		align-items: flex-start;
+		gap: 10px;
+		padding: 9px 0;
+		cursor: pointer;
+	}
+	.check-item input {
+		accent-color: var(--accent-personal);
+		width: 16px;
+		height: 16px;
+		margin-top: 1px;
+		flex-shrink: 0;
+	}
+	.check-text {
+		font-size: 14px;
+		color: var(--text-secondary);
+		transition: color 0.15s ease;
+	}
+	.check-text.done {
+		text-decoration: line-through;
+		color: var(--text-very-faint);
+	}
+
 	.empty {
 		padding: 12px 0;
 	}
@@ -558,6 +792,9 @@
 			width: 100%;
 			flex-direction: row;
 			flex-wrap: wrap;
+		}
+		.deploy-tab {
+			grid-template-columns: 1fr;
 		}
 	}
 </style>
