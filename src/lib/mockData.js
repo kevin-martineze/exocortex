@@ -313,6 +313,21 @@ export class Payment {
 			{ id: 'pagos-l1', label: 'Swagger', url: 'https://swagger.example.com' },
 			{ id: 'pagos-l2', label: 'Grafana', url: 'https://grafana.example.com' },
 			{ id: 'pagos-l3', label: 'Sentry', url: 'https://sentry.example.com' }
+		],
+		health: { up: true, lastChecked: 'hace 2 min' },
+		warnings: [
+			{ id: 'pagos-w1', text: 'No tocar el módulo de reembolsos sin leer el doc de reconciliación.' },
+			{ id: 'pagos-w2', text: 'El webhook de Stripe debe responder 200 antes de 5 segundos.' }
+		],
+		dependencies: [
+			{ id: 'pagos-d1', name: 'Node', version: '20.x', reason: 'No subir a 22: breaking change en el ORM.' },
+			{ id: 'pagos-d2', name: 'Stripe SDK', version: '14.x', reason: 'La v15 cambió el manejo de webhooks.' }
+		],
+		checklist: [
+			{ id: 'pagos-c1', text: 'Migraciones corridas en staging', done: false },
+			{ id: 'pagos-c2', text: 'Variables de entorno de prod actualizadas', done: false },
+			{ id: 'pagos-c3', text: 'Code review aprobado', done: false },
+			{ id: 'pagos-c4', text: 'Feature flag activado', done: false }
 		]
 	},
 	{
@@ -387,6 +402,17 @@ El cliente se registra, verifica su email y configura su método de pago. El est
 		quickLinks: [
 			{ id: 'portal-l1', label: 'Swagger', url: 'https://swagger.example.com' },
 			{ id: 'portal-l2', label: 'Sentry', url: 'https://sentry.example.com' }
+		],
+		health: { up: true, lastChecked: 'hace 12 min' },
+		warnings: [
+			{ id: 'portal-w1', text: 'No cambiar el esquema de Auth0 sin coordinar con el equipo de front.' }
+		],
+		dependencies: [
+			{ id: 'portal-d1', name: 'React', version: '18.x', reason: 'Migración a 19 pendiente de validar con el design system.' }
+		],
+		checklist: [
+			{ id: 'portal-c1', text: 'Code review aprobado', done: false },
+			{ id: 'portal-c2', text: 'Plan de rollback definido', done: false }
 		]
 	},
 	{
@@ -426,7 +452,11 @@ Cada integración publica en su tópico de Kafka. Los consumidores son idempoten
 		],
 		codeFiles: [],
 		commands: [],
-		quickLinks: []
+		quickLinks: [],
+		health: { up: false, lastChecked: 'hace 35 min' },
+		warnings: [],
+		dependencies: [],
+		checklist: []
 	}
 ];
 
