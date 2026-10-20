@@ -126,11 +126,6 @@
 
 	/** @param {KeyboardEvent} e */
 	function onKeydown(e) {
-		if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
-			e.preventDefault();
-			paletteOpen = true;
-			return;
-		}
 		if (paletteOpen || e.metaKey || e.ctrlKey || e.altKey) return;
 		if (e.target instanceof Element && e.target.closest('input, textarea, select, [contenteditable="true"]')) return;
 		if (e.key === '+' || e.key === '=') {
@@ -227,7 +222,7 @@
 		<ProjectPanel project={selected} onclose={() => (selected = null)} />
 	{/if}
 
-	<CommandPalette open={paletteOpen} onclose={() => (paletteOpen = false)} />
+	<CommandPalette bind:open={paletteOpen} {projects} />
 </div>
 
 <style>

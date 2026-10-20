@@ -1,26 +1,41 @@
 <script>
-	import { getProjects } from '#lib/data/mock-projects';
 	import { CLUSTERS, STATUS } from '#lib/domain/constants';
 	import Modal from '../ui/Modal.svelte';
 	import Badge from '../ui/Badge.svelte';
 	import Icon from '../ui/Icon.svelte';
 
-	/** @type {{ open?: boolean, onclose?: () => void }} */
-	let { open = false, onclose } = $props();
+	/** @typedef {import('#lib/domain/types.js').Project} Project */
+
+	/** @type {{ open?: boolean, projects: Project[] }} */
+	let { open = $bindable(false), projects } = $props();
 
 	let query = $state('');
 	/** @type {HTMLInputElement | undefined} */
 	let input;
 	let results = $derived(
-		getProjects().filter((p) => p.title.toLowerCase().includes(query.trim().toLowerCase()))
+		projects.filter((p) => p.title.toLowerCase().includes(query.trim().toLowerCase()))
 	);
 
 	$effect(() => {
 		if (open) input?.focus();
 	});
+
+	/** @param {KeyboardEvent} e */
+	function onKeydown(e) {
+		if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+			e.preventDefault();
+			open = true;
+		}
+	}
+
+	function close() {
+		open = false;
+	}
 </script>
 
-<Modal open={open} onclose={onclose}>
+<svelte:window onkeydown={onKeydown} />
+
+<Modal open={open} onclose={close}>
 	<div class="palette">
 		<div class="search">
 			<span class="search-icon"><Icon name="search" size={16} /></span>
@@ -35,7 +50,7 @@
 		<ul class="results">
 			{#each results as p (p.id)}
 				<li>
-					<a class="result" href={`/projects/${p.id}`} onclick={onclose}>
+					<a class="result" href={`/projects/${p.id}`} onclick={close}>
 						<span class="result-title">{p.title}</span>
 						<span class="result-meta">
 							<Badge label={CLUSTERS[p.cluster].label} color={CLUSTERS[p.cluster].color} dot={false} />
