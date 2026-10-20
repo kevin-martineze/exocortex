@@ -1,6 +1,12 @@
 <script>
 	import { goto } from '$app/navigation';
+	import AuthCard from '#lib/components/auth/AuthCard.svelte';
+	import Button from '#lib/components/ui/Button.svelte';
+	import Field from '#lib/components/ui/Field.svelte';
+	import Input from '#lib/components/ui/Input.svelte';
+	import Checkbox from '#lib/components/ui/Checkbox.svelte';
 	import CopyButton from '#lib/components/ui/CopyButton.svelte';
+	import { passphraseStrength } from '#lib/utils/passphrase';
 
 	const RECOVERY_CODE = 'XQ7K-9F2M-PLR4-7TZD-88CY';
 
@@ -10,99 +16,70 @@
 	let saved = $state(false);
 
 	let canContinue = $derived(pass.length >= 10 && pass === confirm);
-	let strengthPct = $derived(Math.min(100, (pass.length / 14) * 100));
-	let strengthColor = $derived(
-		pass.length >= 14 ? '#4fd1c5' : pass.length >= 10 ? '#e0935a' : '#e06a6a'
-	);
-	let strengthLabel = $derived(
-		pass.length === 0
-			? 'Mínimo 10 caracteres'
-			: pass.length < 10
-				? 'Débil'
-				: pass.length < 14
-					? 'Aceptable'
-					: 'Fuerte'
-	);
+	let strength = $derived(passphraseStrength(pass));
 </script>
 
-<div class="auth-page cosmic-bg">
-	<div class="auth-card">
-		{#if step === 1}
-			<h1 class="auth-title">Crea tu passphrase maestra</h1>
-			<p class="auth-sub">
-				Esta passphrase cifra tus secretos de extremo a extremo. Nunca se envía al servidor.
-			</p>
+<AuthCard
+	title={step === 1 ? 'Crea tu passphrase maestra' : 'Guarda tu código de recuperación'}
+	subtitle={step === 1
+		? 'Esta passphrase cifra tus secretos de extremo a extremo. Nunca se envía al servidor.'
+		: 'Si olvidas tu passphrase, este código es la única forma de recuperar tus secretos. Guárdalo en un lugar seguro, como tu gestor de contraseñas.'}
+>
+	{#if step === 1}
+		<Field label="Passphrase" id="passphrase">
+			<Input
+				id="passphrase"
+				type="password"
+				bind:value={pass}
+				placeholder="Mínimo 10 caracteres"
+			/>
+		</Field>
 
-			<div class="field">
-				<label class="label" for="passphrase">Passphrase</label>
-				<input
-					id="passphrase"
-					class="input"
-					type="password"
-					bind:value={pass}
-					placeholder="Mínimo 10 caracteres"
-				/>
+		<Field label="Confirmar passphrase" id="confirm">
+			<Input id="confirm" type="password" bind:value={confirm} placeholder="Repite tu passphrase" />
+		</Field>
+
+		<div class="strength">
+			<div class="strength-head">
+				<span class="text-faint">Fuerza</span>
+				<span class="strength-label" style:color={strength.color}>{strength.label}</span>
 			</div>
-
-			<div class="field">
-				<label class="label" for="confirm">Confirmar passphrase</label>
-				<input
-					id="confirm"
-					class="input"
-					type="password"
-					bind:value={confirm}
-					placeholder="Repite tu passphrase"
-				/>
+			<div class="strength-track">
+				<div
+					class="strength-fill"
+					style:width={strength.pct + '%'}
+					style:background={strength.color}
+				></div>
 			</div>
+		</div>
 
-			<div class="strength">
-				<div class="strength-head">
-					<span class="text-faint">Fuerza</span>
-					<span class="strength-label" style:color={strengthColor}>{strengthLabel}</span>
-				</div>
-				<div class="strength-track">
-					<div
-						class="strength-fill"
-						style:width={strengthPct + '%'}
-						style:background={strengthColor}
-					></div>
-				</div>
-			</div>
-
-			<button class="btn btn-primary full" disabled={!canContinue} onclick={() => (step = 2)}>
+		<div class="cta">
+			<Button variant="primary" block disabled={!canContinue} onclick={() => (step = 2)}>
 				Continuar
-			</button>
-		{:else}
-			<h1 class="auth-title">Guarda tu código de recuperación</h1>
-			<p class="auth-sub">
-				Si olvidas tu passphrase, este código es la única forma de recuperar tus secretos. Guárdalo
-				en un lugar seguro, como tu gestor de contraseñas.
-			</p>
+			</Button>
+		</div>
+	{:else}
+		<div class="code-box">
+			<code>{RECOVERY_CODE}</code>
+			<CopyButton
+				value={RECOVERY_CODE}
+				toast="Código de recuperación"
+				ariaLabel="Copiar código de recuperación"
+			/>
+		</div>
 
-			<div class="code-box">
-				<code>{RECOVERY_CODE}</code>
-				<CopyButton
-					value={RECOVERY_CODE}
-					toast="Código de recuperación"
-					ariaLabel="Copiar código de recuperación"
-				/>
-			</div>
+		<Checkbox bind:checked={saved}>Ya guardé mi código de recuperación</Checkbox>
 
-			<label class="checkbox">
-				<input type="checkbox" bind:checked={saved} />
-				<span>Ya guardé mi código de recuperación</span>
-			</label>
-
-			<button class="btn btn-primary full" disabled={!saved} onclick={() => goto('/')}>
+		<div class="cta">
+			<Button variant="primary" block disabled={!saved} onclick={() => goto('/')}>
 				Entrar a mi mente
-			</button>
-		{/if}
-	</div>
-</div>
+			</Button>
+		</div>
+	{/if}
+</AuthCard>
 
 <style>
-	.full {
-		width: 100%;
+	.cta {
 		margin-top: 20px;
 	}
 	.strength {
@@ -145,18 +122,5 @@
 		font-size: 15px;
 		letter-spacing: 0.05em;
 		color: var(--text-primary);
-	}
-	.checkbox {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-		font-size: 14px;
-		color: var(--text-secondary);
-		cursor: pointer;
-	}
-	.checkbox input {
-		accent-color: var(--accent-personal);
-		width: 16px;
-		height: 16px;
 	}
 </style>

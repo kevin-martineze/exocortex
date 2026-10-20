@@ -1,60 +1,56 @@
 <script>
 	import { goto } from '$app/navigation';
+	import AuthCard from '#lib/components/auth/AuthCard.svelte';
+	import Button from '#lib/components/ui/Button.svelte';
+	import Field from '#lib/components/ui/Field.svelte';
+	import Input from '#lib/components/ui/Input.svelte';
+	import LinkButton from '#lib/components/ui/LinkButton.svelte';
 
 	let mode = $state('passphrase');
 	let pass = $state('');
 	let code = $state('');
 </script>
 
-<div class="auth-page cosmic-bg">
-	<div class="auth-card">
-		{#if mode === 'passphrase'}
-			<h1 class="auth-title">Bienvenido de vuelta</h1>
-			<p class="auth-sub">Introduce tu passphrase maestra para desbloquear tu mente.</p>
+<AuthCard
+	title={mode === 'passphrase' ? 'Bienvenido de vuelta' : 'Recuperar acceso'}
+	subtitle={mode === 'passphrase'
+		? 'Introduce tu passphrase maestra para desbloquear tu mente.'
+		: 'Introduce tu código de recuperación para restablecer la passphrase.'}
+>
+	{#if mode === 'passphrase'}
+		<Field label="Passphrase" id="pass">
+			<Input id="pass" type="password" bind:value={pass} placeholder="Tu passphrase" />
+		</Field>
 
-			<div class="field">
-				<label class="label" for="pass">Passphrase</label>
-				<input id="pass" class="input" type="password" bind:value={pass} placeholder="Tu passphrase" />
-			</div>
+		<div class="cta">
+			<Button variant="primary" block disabled={!pass} onclick={() => goto('/')}>
+				Desbloquear
+			</Button>
+		</div>
 
-			<button class="btn btn-primary full" disabled={!pass} onclick={() => goto('/')}>Desbloquear</button>
+		<LinkButton onclick={() => (mode = 'recovery')}>¿Olvidaste tu passphrase?</LinkButton>
+	{:else}
+		<Field label="Código de recuperación" id="code">
+			<Input
+				id="code"
+				mono
+				bind:value={code}
+				placeholder="XXXX-XXXX-XXXX-XXXX-XXXX"
+			/>
+		</Field>
 
-			<button class="link" onclick={() => (mode = 'recovery')}>¿Olvidaste tu passphrase?</button>
-		{:else}
-			<h1 class="auth-title">Recuperar acceso</h1>
-			<p class="auth-sub">Introduce tu código de recuperación para restablecer la passphrase.</p>
-
-			<div class="field">
-				<label class="label" for="code">Código de recuperación</label>
-				<input
-					id="code"
-					class="input mono"
-					bind:value={code}
-					placeholder="XXXX-XXXX-XXXX-XXXX-XXXX"
-				/>
-			</div>
-
-			<button class="btn btn-primary full" disabled={!code} onclick={() => goto('/onboarding')}>
+		<div class="cta">
+			<Button variant="primary" block disabled={!code} onclick={() => goto('/onboarding')}>
 				Restablecer con código
-			</button>
+			</Button>
+		</div>
 
-			<button class="link" onclick={() => (mode = 'passphrase')}>← Volver a passphrase</button>
-		{/if}
-	</div>
-</div>
+		<LinkButton onclick={() => (mode = 'passphrase')}>← Volver a passphrase</LinkButton>
+	{/if}
+</AuthCard>
 
 <style>
-	.full {
-		width: 100%;
+	.cta {
 		margin-top: 20px;
-	}
-	.link {
-		display: block;
-		margin: 16px auto 0;
-		font-size: 13px;
-		color: var(--text-faint);
-	}
-	.link:hover {
-		color: var(--accent-personal);
 	}
 </style>

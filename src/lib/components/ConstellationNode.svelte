@@ -70,7 +70,7 @@
 			style:background={coreBg}
 			style:box-shadow={shadow}
 		></span>
-		<span class="label" style:color={cluster.labelColor}>{project.title}</span>
+		<span class="node-label" style:color={cluster.labelColor}>{project.title}</span>
 
 		{#if level >= 1}
 			<div class="meta" transition:fade={{ duration: 150 }}>
@@ -90,7 +90,7 @@
 		{/if}
 
 		{#if level >= 2}
-			<div class="card" transition:fade={{ duration: 150 }}>
+			<div class="node-card" transition:fade={{ duration: 150 }}>
 				<div class="card-line">{stats.docs} docs · {stats.notas} notas · {stats.entornos} entornos · {stats.secretos} secretos</div>
 				{#if project.health}
 					<div class="card-line card-health">
@@ -138,7 +138,7 @@
 	.node:hover .core {
 		transform: scale(1.08);
 	}
-	.label {
+	.node-label {
 		font-size: 12.5px;
 		font-weight: 500;
 		max-width: 130px;
@@ -179,7 +179,7 @@
 		background: var(--bg-panel);
 		color: var(--text-secondary);
 	}
-	.card {
+	.node-card {
 		display: flex;
 		flex-direction: column;
 		gap: 4px;
@@ -209,5 +209,41 @@
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
+	}
+	.float-a {
+		animation: float-a 6s ease-in-out infinite;
+	}
+	.float-b {
+		animation: float-b 7.5s ease-in-out 0.6s infinite;
+	}
+	.float-c {
+		animation: float-c 9s ease-in-out 1.2s infinite;
+	}
+	@keyframes float-a {
+		0%,
+		100% {
+			transform: translate(0, 0);
+		}
+		50% {
+			transform: translate(0, -7px);
+		}
+	}
+	@keyframes float-b {
+		0%,
+		100% {
+			transform: translate(0, 0);
+		}
+		50% {
+			transform: translate(5px, -5px);
+		}
+	}
+	@keyframes float-c {
+		0%,
+		100% {
+			transform: translate(0, 0);
+		}
+		50% {
+			transform: translate(-5px, 4px);
+		}
 	}
 </style>

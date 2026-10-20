@@ -8,6 +8,8 @@
 	import ProjectPanel from '#lib/components/ProjectPanel.svelte';
 	import CommandPalette from '#lib/components/CommandPalette.svelte';
 	import ZoomControls from '#lib/components/ZoomControls.svelte';
+	import Fab from '#lib/components/ui/Fab.svelte';
+	import Icon from '#lib/components/ui/Icon.svelte';
 
 	const projects = getProjects();
 
@@ -136,10 +138,7 @@
 	<header class="topbar">
 		<span class="wordmark">Exocortex</span>
 		<button type="button" class="search-btn" onclick={() => (paletteOpen = true)}>
-			<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-				<circle cx="11" cy="11" r="8"></circle>
-				<path d="m21 21-4.3-4.3"></path>
-			</svg>
+			<Icon name="search" />
 			<span>Buscar</span>
 			<kbd class="kbd">⌘K</kbd>
 		</button>
@@ -202,7 +201,7 @@
 		<span class="legend-note">· rueda: zoom · arrastrar: mover</span>
 	</footer>
 
-	<a class="fab" href="/projects/new" aria-label="Agregar proyecto">+</a>
+	<Fab href="/projects/new" label="Agregar proyecto" />
 
 	<div class="zoom-wrap" class:panel-open={!!selected}>
 		<ZoomControls scale={view.scale} onzoomin={zoomIn} onzoomout={zoomOut} onreset={resetZoom} />
@@ -246,7 +245,7 @@
 		transition: border-color 0.15s ease, color 0.15s ease;
 	}
 	.search-btn:hover {
-		border-color: #433e61;
+		border-color: var(--border-hover);
 		color: var(--text-primary);
 	}
 	.kbd {
@@ -327,29 +326,6 @@
 	}
 	.legend-note {
 		color: var(--text-very-faint);
-	}
-	.fab {
-		position: fixed;
-		right: 24px;
-		bottom: 24px;
-		width: 52px;
-		height: 52px;
-		border-radius: 50%;
-		background: var(--accent-personal);
-		color: #05060c;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		font-size: 26px;
-		font-weight: 700;
-		line-height: 1;
-		box-shadow: 0 8px 26px rgba(79, 209, 197, 0.35);
-		z-index: 20;
-		transition: filter 0.15s ease, transform 0.15s ease;
-	}
-	.fab:hover {
-		filter: brightness(1.08);
-		transform: scale(1.05);
 	}
 	.zoom-wrap {
 		position: absolute;

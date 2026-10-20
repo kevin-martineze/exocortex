@@ -1,5 +1,6 @@
 <script>
 	import { MIN_SCALE, MAX_SCALE } from '#lib/utils/zoom';
+	import Icon from './ui/Icon.svelte';
 
 	let { scale, onzoomin, onzoomout, onreset } = $props();
 </script>
@@ -9,7 +10,7 @@
 	<span class="zoom-pct">{Math.round(scale * 100)}%</span>
 	<button type="button" class="zoom-btn" aria-label="Alejar" onclick={onzoomout} disabled={scale <= MIN_SCALE}>−</button>
 	<button type="button" class="zoom-btn" aria-label="Restablecer zoom" title="Restablecer zoom" onclick={onreset}>
-		<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8V3h5M21 8V3h-5M3 16v5h5M21 16v5h-5"/></svg>
+		<Icon name="fit" />
 	</button>
 </div>
 
@@ -35,7 +36,7 @@
 		transition: border-color 0.15s ease, color 0.15s ease;
 	}
 	.zoom-btn:hover {
-		border-color: #433e61;
+		border-color: var(--border-hover);
 		color: var(--text-primary);
 	}
 	.zoom-btn:disabled {

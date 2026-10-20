@@ -6,6 +6,13 @@
 	import { envBlock } from '#lib/domain/project';
 	import Badge from '#lib/components/ui/Badge.svelte';
 	import CopyButton from '#lib/components/ui/CopyButton.svelte';
+	import Button from '#lib/components/ui/Button.svelte';
+	import Input from '#lib/components/ui/Input.svelte';
+	import Checkbox from '#lib/components/ui/Checkbox.svelte';
+	import Tabs from '#lib/components/ui/Tabs.svelte';
+	import SplitPane from '#lib/components/ui/SplitPane.svelte';
+	import NavList from '#lib/components/ui/NavList.svelte';
+	import Menu from '#lib/components/ui/Menu.svelte';
 
 	let project = $state(structuredClone(getProject(page.params.id)));
 
@@ -25,17 +32,16 @@
 	];
 
 	const ADD_ITEMS = [
-		{ label: 'Variable de entorno', tab: 'env' },
-		{ label: 'Documento (Markdown)', tab: 'docs' },
-		{ label: 'Nota de bitácora', tab: 'notas' },
-		{ label: 'Comando frecuente', tab: 'comandos' },
-		{ label: 'Enlace rápido', tab: 'comandos' }
+		{ label: 'Variable de entorno', onselect: () => selectTab('env') },
+		{ label: 'Documento (Markdown)', onselect: () => selectTab('docs') },
+		{ label: 'Nota de bitácora', onselect: () => selectTab('notas') },
+		{ label: 'Comando frecuente', onselect: () => selectTab('comandos') },
+		{ label: 'Enlace rápido', onselect: () => selectTab('comandos') }
 	];
 
 	let activeTab = $state('docs');
-	let menuOpen = $state(false);
-	let activeDocId = $state(null);
-	let activeFileId = $state(null);
+	let activeDocId = $state(project?.docs[0]?.id ?? null);
+	let activeFileId = $state(project?.codeFiles[0]?.id ?? null);
 	let newEnvOpen = $state(false);
 	let newEnvName = $state('');
 	let warnOpen = $state(false);
@@ -47,6 +53,8 @@
 	let activeFile = $derived(
 		project?.codeFiles.find((f) => f.id === activeFileId) ?? project?.codeFiles[0] ?? null
 	);
+	let docItems = $derived(project?.docs.map((d) => ({ id: d.id, label: d.title })) ?? []);
+	let codeItems = $derived(project?.codeFiles.map((f) => ({ id: f.id, label: f.path })) ?? []);
 	let notasMd = $derived(
 		(project?.bitacora ?? []).map((b) => `### ${b.date}\n\n${b.text}`).join('\n\n')
 	);
@@ -54,7 +62,6 @@
 
 	function selectTab(tab) {
 		activeTab = tab;
-		menuOpen = false;
 	}
 
 	function addEnv() {
@@ -94,23 +101,14 @@
 				</div>
 			</div>
 			<div class="add-wrap">
-				<button class="btn btn-ghost" onclick={() => (menuOpen = !menuOpen)}>+ Agregar contenido</button>
-				{#if menuOpen}
-					<div class="menu" role="menu">
-						{#each ADD_ITEMS as item}
-							<button class="menu-item" role="menuitem" onclick={() => selectTab(item.tab)}>
-								{item.label}
-							</button>
-						{/each}
-					</div>
-				{/if}
+				<Menu label="+ Agregar contenido" items={ADD_ITEMS} />
 			</div>
 		</header>
 
 		<section class="warnings" aria-label="Advertencias fijadas">
 			<div class="warnings-head">
 				<span class="warnings-title">Advertencias fijadas</span>
-				<button class="btn btn-ghost small" onclick={() => (warnOpen = !warnOpen)}>+ Fijar advertencia</button>
+				<Button size="sm" onclick={() => (warnOpen = !warnOpen)}>+ Fijar advertencia</Button>
 			</div>
 			{#if project.warnings.length}
 				<ul class="warnings-list">
@@ -123,90 +121,65 @@
 			{/if}
 			{#if warnOpen}
 				<div class="new-warning">
-					<input
-						class="input"
-						type="text"
+					<Input
+						style="flex: 1"
 						placeholder="Advertencia (ej. no tocar X sin leer Y)"
 						bind:value={warnText}
 					/>
-					<button class="btn btn-primary" onclick={addWarning}>Agregar</button>
+					<Button variant="primary" onclick={addWarning}>Agregar</Button>
 				</div>
 			{/if}
 		</section>
 
-		<nav class="tabs" role="tablist">
-			{#each TABS as t}
-				<button
-					class="tab"
-					class:active={activeTab === t.id}
-					role="tab"
-					aria-selected={activeTab === t.id}
-					onclick={() => (activeTab = t.id)}
-				>
-					{t.label}
-				</button>
-			{/each}
-		</nav>
+		<Tabs tabs={TABS} bind:active={activeTab} />
 
 		<main class="content">
 			{#if activeTab === 'docs'}
-				<div class="two-pane">
-					<div class="side">
-						{#each project.docs as d (d.id)}
-							<button
-								class="side-item"
-								class:active={activeDoc?.id === d.id}
-								onclick={() => (activeDocId = d.id)}
-							>
-								{d.title}
-							</button>
-						{:else}
-							<p class="muted empty">Sin documentos todavía.</p>
-						{/each}
-					</div>
-					<div class="pane">
-						{#if activeDoc}
-							<div class="pane-head">
-								<h2 class="pane-title">{activeDoc.title}</h2>
-								<button class="btn btn-ghost" onclick={() => copyText(activeDoc.content, 'Documento')}>
-									Copiar como Markdown
-								</button>
-							</div>
-							<pre class="markdown">{activeDoc.content}</pre>
-						{/if}
-					</div>
-				</div>
+				<SplitPane>
+					{#snippet side()}
+						<NavList items={docItems} bind:active={activeDocId} empty="Sin documentos todavía." />
+					{/snippet}
+					{#if activeDoc}
+						<div class="pane-head">
+							<h2 class="pane-title">{activeDoc.title}</h2>
+							<Button onclick={() => copyText(activeDoc.content, 'Documento')}>
+								Copiar como Markdown
+							</Button>
+						</div>
+						<pre class="markdown">{activeDoc.content}</pre>
+					{/if}
+				</SplitPane>
 			{:else if activeTab === 'env'}
 				<div class="env-tab">
 					<div class="env-head">
 						<h2 class="pane-title">Entornos</h2>
-						<button class="btn btn-ghost" onclick={() => (newEnvOpen = !newEnvOpen)}>+ Entorno</button>
+						<Button onclick={() => (newEnvOpen = !newEnvOpen)}>+ Entorno</Button>
 					</div>
 
 					{#if newEnvOpen}
 						<div class="new-env">
-							<input
-								class="input"
-								type="text"
+							<Input
+								style="flex: 1"
 								placeholder="Nombre del entorno (ej. Demo)"
 								bind:value={newEnvName}
 							/>
-							<button class="btn btn-primary" onclick={addEnv}>Agregar</button>
+							<Button variant="primary" onclick={addEnv}>Agregar</Button>
 						</div>
 					{/if}
 
 					{#each project.environments as env (env.id)}
-						<section class="env-card">
+						<Card>
 							<div class="env-card-head">
 								<h3 class="env-name">{env.name}</h3>
 								{#if env.url}<span class="mono muted">{env.url}</span>{/if}
 								{#if env.vars?.length}
-									<button
-										class="btn btn-ghost small"
+									<Button
+										size="sm"
+										style="margin-left: auto"
 										onclick={() => copyText(envBlock(env), `.env de ${env.name}`)}
 									>
 										Copiar todo el .env de {env.name}
-									</button>
+									</Button>
 								{/if}
 							</div>
 							{#if env.vars?.length}
@@ -226,42 +199,33 @@
 							{:else}
 								<p class="muted empty">Sin variables todavía en {env.name}.</p>
 							{/if}
-						</section>
+						</Card>
 					{:else}
 						<p class="muted empty">Sin entornos todavía.</p>
 					{/each}
 				</div>
 			{:else if activeTab === 'code'}
-				<div class="two-pane">
-					<div class="side">
-						{#each project.codeFiles as f (f.id)}
-							<button
-								class="side-item mono"
-								class:active={activeFile?.id === f.id}
-								onclick={() => (activeFileId = f.id)}
-							>
-								{f.path}
-							</button>
-						{:else}
-							<p class="muted empty">Sin archivos todavía.</p>
-						{/each}
-					</div>
-					<div class="pane">
-						{#if activeFile}
-							<div class="pane-head">
-								<h2 class="pane-title mono">{activeFile.path}</h2>
-							</div>
-							<pre class="code"><code>{activeFile.snippet}</code></pre>
-						{/if}
-					</div>
-				</div>
+				<SplitPane>
+					{#snippet side()}
+						<NavList
+							items={codeItems}
+							mono
+							bind:active={activeFileId}
+							empty="Sin archivos todavía."
+						/>
+					{/snippet}
+					{#if activeFile}
+						<div class="pane-head">
+							<h2 class="pane-title mono">{activeFile.path}</h2>
+						</div>
+						<pre class="code"><code>{activeFile.snippet}</code></pre>
+					{/if}
+				</SplitPane>
 			{:else if activeTab === 'notas'}
 				<div class="notas-tab">
 					<div class="pane-head">
 						<h2 class="pane-title">Bitácora</h2>
-						<button class="btn btn-ghost" onclick={() => copyText(notasMd, 'Bitácora')}>
-							Copiar como Markdown
-						</button>
+						<Button onclick={() => copyText(notasMd, 'Bitácora')}>Copiar como Markdown</Button>
 					</div>
 					{#each project.bitacora as b (b.id)}
 						<article class="nota">
@@ -274,7 +238,7 @@
 				</div>
 			{:else if activeTab === 'deploy'}
 				<div class="deploy-tab">
-					<section class="deploy-card">
+					<Card>
 						<h2 class="pane-title">Dependencias críticas</h2>
 						{#each project.dependencies as dep (dep.id)}
 							<div class="dep">
@@ -287,22 +251,21 @@
 						{:else}
 							<p class="muted empty">Sin dependencias críticas registradas.</p>
 						{/each}
-					</section>
+					</Card>
 
-					<section class="deploy-card">
+					<Card>
 						<div class="deploy-card-head">
 							<h2 class="pane-title">Checklist de deploy</h2>
 							<span class="muted">{doneCount} de {project.checklist.length} listos</span>
 						</div>
 						{#each project.checklist as c (c.id)}
-							<label class="check-item">
-								<input type="checkbox" bind:checked={c.done} />
-								<span class="check-text" class:done={c.done}>{c.text}</span>
-							</label>
+							<div class="check-item">
+								<Checkbox bind:checked={c.done} strike>{c.text}</Checkbox>
+							</div>
 						{:else}
 							<p class="muted empty">Sin checklist registrado.</p>
 						{/each}
-					</section>
+					</Card>
 				</div>
 			{:else}
 				<div class="comandos-tab">
@@ -336,7 +299,7 @@
 {:else}
 	<div class="page flat-bg not-found">
 		<p>Proyecto no encontrado.</p>
-		<a class="btn btn-ghost" href="/">← Volver a la constelación</a>
+		<Button href="/">← Volver a la constelación</Button>
 	</div>
 {/if}
 
@@ -379,92 +342,11 @@
 		top: 20px;
 		right: 0;
 	}
-	.menu {
-		position: absolute;
-		right: 0;
-		top: calc(100% + 6px);
-		min-width: 210px;
-		background: var(--bg-panel);
-		border: 1px solid var(--border-panel);
-		border-radius: var(--radius-md);
-		padding: 6px;
-		z-index: 50;
-		box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
-	}
-	.menu-item {
-		display: block;
-		width: 100%;
-		text-align: left;
-		padding: 9px 12px;
-		border-radius: var(--radius-sm);
-		font-size: 14px;
-		color: var(--text-secondary);
-	}
-	.menu-item:hover {
-		background: var(--bg-ghost);
-		color: var(--text-primary);
-	}
-
-	.tabs {
-		display: flex;
-		gap: 4px;
-		border-bottom: 1px solid var(--border-panel);
-		margin-bottom: 24px;
-		overflow-x: auto;
-	}
-	.tab {
-		padding: 10px 14px;
-		font-size: 14px;
-		color: var(--text-faint);
-		border-bottom: 2px solid transparent;
-		white-space: nowrap;
-	}
-	.tab:hover {
-		color: var(--text-primary);
-	}
-	.tab.active {
-		color: var(--text-primary);
-		border-bottom-color: var(--accent-personal);
-	}
 
 	.content {
 		flex: 1;
 	}
 
-	.two-pane {
-		display: flex;
-		gap: 20px;
-		align-items: flex-start;
-	}
-	.side {
-		width: 240px;
-		flex-shrink: 0;
-		display: flex;
-		flex-direction: column;
-		gap: 4px;
-	}
-	.side-item {
-		text-align: left;
-		padding: 9px 12px;
-		border-radius: var(--radius-sm);
-		font-size: 14px;
-		color: var(--text-secondary);
-	}
-	.side-item:hover {
-		background: var(--bg-ghost);
-	}
-	.side-item.active {
-		background: var(--bg-ghost);
-		color: var(--text-primary);
-	}
-	.pane {
-		flex: 1;
-		min-width: 0;
-		background: var(--bg-panel);
-		border: 1px solid var(--border-panel);
-		border-radius: var(--radius-lg);
-		padding: 20px;
-	}
 	.pane-head {
 		display: flex;
 		align-items: center;
@@ -514,15 +396,6 @@
 		display: flex;
 		gap: 10px;
 	}
-	.new-env .input {
-		flex: 1;
-	}
-	.env-card {
-		background: var(--bg-panel);
-		border: 1px solid var(--border-panel);
-		border-radius: var(--radius-lg);
-		padding: 18px 20px;
-	}
 	.env-card-head {
 		display: flex;
 		align-items: center;
@@ -534,11 +407,6 @@
 		margin: 0;
 		font-size: 16px;
 		font-weight: 600;
-	}
-	.small {
-		padding: 7px 12px;
-		font-size: 13px;
-		margin-left: auto;
 	}
 	.vars {
 		display: flex;
@@ -621,7 +489,7 @@
 		color: var(--text-ghost);
 	}
 	.quick-link:hover {
-		border-color: #433e61;
+		border-color: var(--border-hover);
 		color: var(--text-primary);
 	}
 
@@ -703,21 +571,12 @@
 		gap: 10px;
 		margin-top: 12px;
 	}
-	.new-warning .input {
-		flex: 1;
-	}
 
 	.deploy-tab {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 		gap: 20px;
 		align-items: start;
-	}
-	.deploy-card {
-		background: var(--bg-panel);
-		border: 1px solid var(--border-panel);
-		border-radius: var(--radius-lg);
-		padding: 18px 20px;
 	}
 	.deploy-card-head {
 		display: flex;
@@ -753,27 +612,7 @@
 		color: var(--text-secondary);
 	}
 	.check-item {
-		display: flex;
-		align-items: flex-start;
-		gap: 10px;
 		padding: 9px 0;
-		cursor: pointer;
-	}
-	.check-item input {
-		accent-color: var(--accent-personal);
-		width: 16px;
-		height: 16px;
-		margin-top: 1px;
-		flex-shrink: 0;
-	}
-	.check-text {
-		font-size: 14px;
-		color: var(--text-secondary);
-		transition: color 0.15s ease;
-	}
-	.check-text.done {
-		text-decoration: line-through;
-		color: var(--text-very-faint);
 	}
 
 	.empty {
@@ -787,14 +626,6 @@
 	}
 
 	@media (max-width: 760px) {
-		.two-pane {
-			flex-direction: column;
-		}
-		.side {
-			width: 100%;
-			flex-direction: row;
-			flex-wrap: wrap;
-		}
 		.deploy-tab {
 			grid-template-columns: 1fr;
 		}

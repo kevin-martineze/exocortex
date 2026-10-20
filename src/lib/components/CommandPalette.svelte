@@ -3,6 +3,7 @@
 	import { CLUSTERS, STATUS } from '#lib/domain/constants';
 	import Modal from './ui/Modal.svelte';
 	import Badge from './ui/Badge.svelte';
+	import Icon from './ui/Icon.svelte';
 
 	let { open = false, onclose } = $props();
 
@@ -15,12 +16,9 @@
 <Modal open={open} onclose={onclose}>
 	<div class="palette">
 		<div class="search">
-			<svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-				<circle cx="11" cy="11" r="8"></circle>
-				<path d="m21 21-4.3-4.3"></path>
-			</svg>
+			<span class="search-icon"><Icon name="search" size={16} /></span>
 			<input
-				class="input search-input"
+				class="search-input"
 				type="text"
 				placeholder="Buscar proyectos…"
 				autofocus
@@ -66,6 +64,9 @@
 		background: transparent;
 		padding: 0;
 		font-size: 15px;
+		color: var(--text-primary);
+		flex: 1;
+		min-width: 0;
 	}
 	.search-input:focus {
 		box-shadow: none;

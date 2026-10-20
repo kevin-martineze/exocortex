@@ -4,6 +4,9 @@
 	import { CLUSTERS, STATUS, ROLES } from '#lib/domain/constants';
 	import Badge from './ui/Badge.svelte';
 	import CopyButton from './ui/CopyButton.svelte';
+	import Button from './ui/Button.svelte';
+	import IconButton from './ui/IconButton.svelte';
+	import Icon from './ui/Icon.svelte';
 
 	let { project, onclose } = $props();
 
@@ -25,11 +28,11 @@
 	<header class="header">
 		<div class="title-wrap">
 			<h2 class="title">{project.title}</h2>
-			<button type="button" class="btn-icon close" aria-label="Cerrar panel" onclick={onclose}>
-				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-					<path d="M18 6 6 18M6 6l12 12"></path>
-				</svg>
-			</button>
+			<span class="close">
+				<IconButton label="Cerrar panel" onclick={onclose}>
+					<Icon name="close" />
+				</IconButton>
+			</span>
 		</div>
 		<div class="badges">
 			<Badge label={cluster.label} color={cluster.color} />
@@ -56,14 +59,14 @@
 						</div>
 					{/each}
 				</div>
-				<button type="button" class="btn btn-ghost block" onclick={copyEnv}>Copiar todo el .env</button>
+				<Button block onclick={copyEnv}>Copiar todo el .env</Button>
 			{:else}
 				<p class="muted">Sin variables registradas todavía.</p>
 			{/if}
 		{:else}
 			<h3 class="section-title">Notas</h3>
 			<div class="notes">{project.notes ?? 'Sin notas todavía.'}</div>
-			<button type="button" class="btn btn-ghost block" onclick={copyNotes}>Copiar como Markdown</button>
+			<Button block onclick={copyNotes}>Copiar como Markdown</Button>
 		{/if}
 	</div>
 
@@ -167,9 +170,6 @@
 		line-height: 1.6;
 		color: var(--text-secondary);
 		margin-bottom: 16px;
-	}
-	.block {
-		width: 100%;
 	}
 	.footer {
 		padding: 16px 20px;
