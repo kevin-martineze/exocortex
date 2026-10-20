@@ -1,9 +1,9 @@
 <script>
 	import { getProjects } from '#lib/data/mock-projects';
 	import { CLUSTERS, STATUS } from '#lib/domain/constants';
-	import Modal from './ui/Modal.svelte';
-	import Badge from './ui/Badge.svelte';
-	import Icon from './ui/Icon.svelte';
+	import Modal from '../ui/Modal.svelte';
+	import Badge from '../ui/Badge.svelte';
+	import Icon from '../ui/Icon.svelte';
 
 	let { open = false, onclose } = $props();
 

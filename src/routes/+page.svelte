@@ -3,11 +3,11 @@
 	import { CLUSTERS } from '#lib/domain/constants';
 	import { projectEdges } from '#lib/domain/project';
 	import { clampPan, zoomAt, detailLevel, STEP } from '#lib/utils/zoom';
-	import Stars from '#lib/components/Stars.svelte';
-	import ConstellationNode from '#lib/components/ConstellationNode.svelte';
-	import ProjectPanel from '#lib/components/ProjectPanel.svelte';
-	import CommandPalette from '#lib/components/CommandPalette.svelte';
-	import ZoomControls from '#lib/components/ZoomControls.svelte';
+	import Stars from '#lib/components/constellation/Stars.svelte';
+	import ConstellationNode from '#lib/components/constellation/ConstellationNode.svelte';
+	import ProjectPanel from '#lib/components/project/ProjectPanel.svelte';
+	import CommandPalette from '#lib/components/search/CommandPalette.svelte';
+	import ZoomControls from '#lib/components/constellation/ZoomControls.svelte';
 	import Fab from '#lib/components/ui/Fab.svelte';
 	import Icon from '#lib/components/ui/Icon.svelte';
 

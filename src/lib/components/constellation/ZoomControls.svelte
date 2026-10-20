@@ -1,6 +1,6 @@
 <script>
 	import { MIN_SCALE, MAX_SCALE } from '#lib/utils/zoom';
-	import Icon from './ui/Icon.svelte';
+	import Icon from '../ui/Icon.svelte';
 
 	let { scale, onzoomin, onzoomout, onreset } = $props();
 </script>

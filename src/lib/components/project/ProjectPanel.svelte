@@ -2,11 +2,11 @@
 	import { copyText } from '#lib/utils/clipboard';
 	import { envBlock } from '#lib/domain/project';
 	import { CLUSTERS, STATUS, ROLES } from '#lib/domain/constants';
-	import Badge from './ui/Badge.svelte';
-	import CopyButton from './ui/CopyButton.svelte';
-	import Button from './ui/Button.svelte';
-	import IconButton from './ui/IconButton.svelte';
-	import Icon from './ui/Icon.svelte';
+	import Badge from '../ui/Badge.svelte';
+	import CopyButton from '../ui/CopyButton.svelte';
+	import Button from '../ui/Button.svelte';
+	import IconButton from '../ui/IconButton.svelte';
+	import Icon from '../ui/Icon.svelte';
 
 	let { project, onclose } = $props();
 
