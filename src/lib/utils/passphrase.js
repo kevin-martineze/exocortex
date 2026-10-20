@@ -1,3 +1,4 @@
+/** @param {string} pass @returns {{ pct: number, color: string, label: string }} */
 export function passphraseStrength(pass) {
 	return {
 		pct: Math.min(100, (pass.length / 14) * 100),

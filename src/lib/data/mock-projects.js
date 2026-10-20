@@ -2,7 +2,36 @@
 // todo el contenido vive aquí por ahora. La forma sigue docs/06-modelo-datos.md,
 // extendida con commands / quickLinks / codeFiles que aún no están en ese doc.
 
-const projects = [
+/** @typedef {import('#lib/domain/types.js').Project} Project */
+
+/**
+ * @typedef {{
+ *   id: string,
+ *   title: string,
+ *   cluster: Project['cluster'],
+ *   role: Project['role'],
+ *   status: Project['status'],
+ *   links: Project['links'],
+ *   position: Project['position'],
+ *   locked?: boolean,
+ *   notes?: string,
+ *   stack?: string[],
+ *   related?: string[],
+ *   docs?: Project['docs'],
+ *   bitacora?: Project['bitacora'],
+ *   environments?: Project['environments'],
+ *   codeFiles?: Array<Project['codeFiles'][number] & { language?: string }>,
+ *   commands?: Project['commands'],
+ *   quickLinks?: Project['quickLinks'],
+ *   warnings?: Project['warnings'],
+ *   dependencies?: Project['dependencies'],
+ *   checklist?: Project['checklist'],
+ *   health?: Project['health']
+ * }} RawProject
+ */
+
+/** @type {RawProject[]} */
+const raw = [
 	// ─── Cluster Personal ────────────────────────────────────────────────
 	{
 		id: 'exocortex',
@@ -442,14 +471,39 @@ Cada integración publica en su tópico de Kafka. Los consumidores son idempoten
 	}
 ];
 
+/** @param {RawProject} p @returns {Project} */
+function normalizeProject(p) {
+	return {
+		...p,
+		locked: p.locked ?? false,
+		stack: p.stack ?? [],
+		related: p.related ?? [],
+		docs: p.docs ?? [],
+		bitacora: p.bitacora ?? [],
+		environments: (p.environments ?? []).map((env) => ({ ...env, vars: env.vars ?? [] })),
+		codeFiles: (p.codeFiles ?? []).map(({ id, path, snippet }) => ({ id, path, snippet })),
+		commands: p.commands ?? [],
+		quickLinks: p.quickLinks ?? [],
+		warnings: p.warnings ?? [],
+		dependencies: p.dependencies ?? [],
+		checklist: p.checklist ?? [],
+		health: p.health ?? null
+	};
+}
+
+const projects = raw.map(normalizeProject);
+
+/** @param {string} id @returns {Project | undefined} */
 export function getProject(id) {
 	return projects.find((p) => p.id === id);
 }
 
+/** @returns {Project[]} */
 export function getProjects() {
 	return projects;
 }
 
+/** @param {import('#lib/domain/types.js').Cluster} cluster @returns {Project[]} */
 export function projectsByCluster(cluster) {
 	return projects.filter((p) => p.cluster === cluster);
 }

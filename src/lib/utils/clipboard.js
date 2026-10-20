@@ -1,5 +1,6 @@
 import { showToast } from '#lib/state/toast.svelte.js';
 
+/** @param {string} text @returns {boolean} */
 function fallbackCopy(text) {
 	const textarea = document.createElement('textarea');
 	textarea.value = text;
@@ -18,6 +19,7 @@ function fallbackCopy(text) {
 	}
 }
 
+/** @param {string} text @param {string} [label] @returns {Promise<boolean>} */
 export async function copyText(text, label = 'Contenido') {
 	let ok = false;
 	if (navigator.clipboard?.writeText) {
