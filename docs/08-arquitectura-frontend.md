@@ -198,6 +198,6 @@ La estructura anterior era la del prototipo: páginas monolíticas, componentes 
 | 1 | Carpetas `domain/`, `utils/`, `data/` y `state/`; primitivas de `ui/`; limpieza de `app.css` | Hecha |
 | 1b | Tipos JSDoc del dominio y de las props; `pnpm check` en 0 | Hecha |
 | 2 | `constellation/` + home delgada | Hecha |
-| 3 | `project/` + páginas de proyecto delgadas | En curso |
-| 4 | `auth/` + `search/` + onboarding/unlock delgadas | Pendiente |
+| 3 | `project/` + páginas de proyecto delgadas | Hecha |
+| 4 | `auth/` + `search/` + onboarding/unlock delgadas | En curso |
 | 5 | Capa `api/` + `state/` + funciones `load`; ninguna página importa datos directo | Pendiente |
