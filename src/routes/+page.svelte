@@ -221,7 +221,7 @@
 
 	<a class="fab" href="/projects/new" aria-label="Agregar proyecto">+</a>
 
-	<div class="zoom-wrap">
+	<div class="zoom-wrap" class:panel-open={!!selected}>
 		<ZoomControls scale={view.scale} onzoomin={zoomIn} onzoomout={zoomOut} onreset={resetZoom} />
 	</div>
 
@@ -373,5 +373,9 @@
 		right: 24px;
 		bottom: 92px;
 		z-index: 20;
+		transition: right 200ms ease;
+	}
+	.zoom-wrap.panel-open {
+		right: 384px;
 	}
 </style>

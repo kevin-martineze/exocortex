@@ -174,17 +174,18 @@
 		padding: 1px 6px;
 		border: 1px solid var(--border-panel);
 		border-radius: 999px;
+		background: var(--bg-panel);
 		color: var(--text-secondary);
 	}
 	.card {
 		display: flex;
 		flex-direction: column;
 		gap: 4px;
-		max-width: 220px;
+		max-width: 260px;
 		padding: 10px 12px;
 		border-radius: var(--radius-md);
 		border: 1px solid var(--border-panel);
-		background: color-mix(in srgb, var(--bg-panel) 85%, transparent);
+		background: var(--bg-panel);
 		font-size: 11.5px;
 		color: var(--text-secondary);
 		text-align: left;
