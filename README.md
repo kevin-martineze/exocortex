@@ -14,6 +14,9 @@
 - [Ideas de funcionalidades](docs/04-funcionalidades.md)
 - [Stack técnico](docs/05-stack.md)
 - [Modelo de datos](docs/06-modelo-datos.md)
+- [Contrato del API](docs/07-api.md)
+- [Arquitectura del frontend](docs/08-arquitectura-frontend.md)
+- [Arquitectura del backend](docs/09-arquitectura-backend.md)
 
 ## Próximo paso
 
