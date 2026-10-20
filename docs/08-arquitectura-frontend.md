@@ -73,7 +73,7 @@ No saben nada de proyectos ni de secretos. Cualquier botón, input o tarjeta de 
 | `Icon` | `name` (`'search' \| 'close' \| 'copy' \| 'fit'`), `size` (default 15) | Todos los SVG inline de la app viven aquí. |
 | `Input` | `value` (`$bindable`), `type`, `id`, `placeholder`, `mono`, `...rest` | |
 | `Field` | `label`, `id`, `hint`, `children` | Label + control + hint. |
-| `Checkbox` | `checked` (`$bindable`), `children` (texto) | |
+| `Checkbox` | `checked` (`$bindable`), `strike`, `onchange`, `children` (texto) | `onchange(checked)` para usarlo sin `bind`. |
 | `Badge` | `label`, `color`, `dot` | |
 | `Chip` | `label`, `selected`, `onclick` | Toggle redondo (stack). |
 | `Pill` | `label`, `selected`, `color`, `onclick` | Opción de selección única (cluster, rol, estado). |
@@ -86,6 +86,7 @@ No saben nada de proyectos ni de secretos. Cualquier botón, input o tarjeta de 
 | `Toast` | — | Lee `state/toast.svelte.js`. |
 | `CopyButton` | `value`, `toast`, `ariaLabel` | `IconButton` + `Icon name="copy"`. |
 | `EmptyState` | `children` | Texto atenuado para listas vacías. |
+| `SectionHeader` | `title`, `mono`, `children` (acciones) | Título de sección con acciones a la derecha. |
 | `LinkButton` | `onclick`, `children` | Botón con apariencia de enlace. |
 | `Fab` | `href`, `label` | Botón flotante circular. |
 
@@ -108,19 +109,19 @@ No saben nada de proyectos ni de secretos. Cualquier botón, input o tarjeta de 
 
 | Componente | Props | Responsabilidad |
 |---|---|---|
-| `ProjectHeader` | `project`, `addItems`, `onadd` | Volver, título, badges, salud y menú "Agregar contenido". |
+| `ProjectHeader` | `project`, `addItems` (`[{ label, tab }]`), `onadd(tab)` | Volver, título, badges, salud y menú "Agregar contenido". |
 | `ProjectBadges` | `project` | Cluster, rol y estado. Se usa en el header y en el panel. |
 | `HealthBadge` | `health` | Operativo / caído, con pulso. |
-| `WarningsBar` | `warnings`, `onadd` | Advertencias fijadas y el formulario para fijar una. |
+| `WarningsBar` | `warnings`, `onadd(text)` | Advertencias fijadas y el formulario para fijar una. |
 | `ProjectPanel` | `project`, `onclose` | Panel lateral de la constelación. |
-| `ProjectForm` | `onsubmit` | Formulario de nuevo proyecto. |
+| `ProjectForm` | `onsubmit(draft)` | Formulario de nuevo proyecto. `draft` es un `ProjectDraft`. |
 | `SecretRow` | `secret` (`{ key, value }`), `compact` | Clave, valor enmascarado y copiar. |
 | `EnvironmentCard` | `environment` | Entorno con sus variables y "Copiar todo el .env". |
 | `tabs/DocsTab` | `docs` | |
-| `tabs/EnvTab` | `environments`, `onaddenv` | |
+| `tabs/EnvTab` | `environments`, `onaddenv(name)` | |
 | `tabs/CodeTab` | `files` | |
 | `tabs/NotesTab` | `entries` | Bitácora + copiar como Markdown. |
-| `tabs/DeployTab` | `dependencies`, `checklist` | |
+| `tabs/DeployTab` | `dependencies`, `checklist`, `ontoggle(id, done)` | |
 | `tabs/CommandsTab` | `commands`, `quickLinks` | |
 
 ### `auth/`
@@ -146,7 +147,7 @@ No saben nada de proyectos ni de secretos. Cualquier botón, input o tarjeta de 
 
 1. **Páginas delgadas.** Un `+page.svelte` no pasa de ~80 líneas. Si crece, falta un componente.
 2. **Componentes acotados.** Fuera de `ui/`, un componente no pasa de ~150 líneas. Si crece, se parte.
-3. **Datos por props.** Un componente nunca importa `api/` ni `data/`. Los datos le llegan por props, y los cambios salen por callbacks.
+3. **Datos por props.** Un componente nunca importa `api/` ni `data/`. Los datos le llegan por props, y los cambios salen por callbacks: un componente no muta los objetos que recibe (ej. el checklist avisa con `ontoggle`, no con `bind` sobre la prop).
 4. **Callbacks `on<verbo>`** en minúsculas (`onselect`, `onadd`, `onclose`). `$bindable` solo para valores de formulario y `open`.
 5. **Estilos scoped.** Cada componente trae su `<style>`. `app.css` solo tiene tokens, reset, estilos base, fondos (`.cosmic-bg`, `.flat-bg`, `.page`) y utilidades mínimas (`.sr-only`, `.mono`, `.muted`, `.text-secondary`, `.text-faint`).
 6. **Colores por token.** Los colores salen de variables CSS en `:root` (`app.css`) o de las constantes de `domain/constants.js`. Un color nuevo se agrega como token, no como hex dentro del componente.
@@ -159,7 +160,7 @@ No saben nada de proyectos ni de secretos. Cualquier botón, input o tarjeta de 
 
 El proyecto es JavaScript con `checkJs` activo. Los tipos se escriben en JSDoc y los verifica `svelte-check`.
 
-- **Tipos del dominio** en `lib/domain/types.js` (`@typedef`): `Project`, `Environment`, `Secret`, `Doc`, `BitacoraEntry`, `CodeFile`, `Command`, `QuickLink`, `Warning`, `Dependency`, `ChecklistItem`, `Health`, `Cluster`, `Status`, `Role`. Se importan con `/** @typedef {import('#lib/domain/types.js').Project} Project */`.
+- **Tipos del dominio** en `lib/domain/types.js` (`@typedef`): `Project`, `Environment`, `Secret`, `Doc`, `BitacoraEntry`, `CodeFile`, `Command`, `QuickLink`, `Warning`, `Dependency`, `ChecklistItem`, `Health`, `Cluster`, `Status`, `Role`, `Edge`, `ProjectDraft`. Se importan con `/** @typedef {import('#lib/domain/types.js').Project} Project */`.
 - **Props de cada componente** tipadas en el `$props()`:
   ```js
   /** @type {{ label: string, color?: string, dot?: boolean }} */
