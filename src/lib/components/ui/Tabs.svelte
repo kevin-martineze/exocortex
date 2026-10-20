@@ -2,8 +2,7 @@
 	let { tabs, active = $bindable() } = $props();
 </script>
 
-<!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role -->
-<nav class="tabs" role="tablist">
+<div role="tablist" class="tabs">
 	{#each tabs as t (t.id)}
 		<button
 			class="tab"
@@ -15,7 +14,7 @@
 			{t.label}
 		</button>
 	{/each}
-</nav>
+</div>
 
 <style>
 	.tabs {
