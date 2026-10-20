@@ -19,7 +19,6 @@
 	let cluster = $derived(CLUSTERS[project.cluster]);
 	let accent = $derived(cluster.color);
 	let load = $derived(projectLoad(project));
-
 	// Misma fórmula que el prototipo: hasta 60% de blanco mezclado al tope de carga,
 	// un halo (box-shadow) que crece en blur/spread/alpha con la carga.
 	let loadPct = $derived(Math.round((load / 10) * 60));
