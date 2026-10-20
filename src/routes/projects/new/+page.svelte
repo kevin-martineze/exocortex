@@ -12,6 +12,7 @@
 	let cluster = $state('personal');
 	let role = $state('colaborador');
 	let status = $state('activo');
+	/** @type {string[]} */
 	let stack = $state([]);
 	let repo = $state('');
 	let board = $state('');
@@ -19,6 +20,7 @@
 
 	let canCreate = $derived(title.trim().length > 0);
 
+	/** @param {string} item */
 	function toggleStack(item) {
 		stack = stack.includes(item) ? stack.filter((s) => s !== item) : [...stack, item];
 	}

@@ -1,4 +1,5 @@
 <script>
+	/** @type {{ checked?: boolean, strike?: boolean, children?: import('svelte').Snippet }} */
 	let { checked = $bindable(false), strike = false, children } = $props();
 </script>
 

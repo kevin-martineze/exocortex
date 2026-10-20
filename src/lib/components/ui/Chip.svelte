@@ -1,4 +1,5 @@
 <script>
+	/** @type {{ label: string, selected?: boolean, onclick?: (e: MouseEvent) => void }} */
 	let { label, selected = false, onclick } = $props();
 </script>
 

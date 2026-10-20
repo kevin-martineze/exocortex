@@ -1,6 +1,7 @@
 <script>
 	import Card from '../ui/Card.svelte';
 
+	/** @type {{ title: string, subtitle?: string, children?: import('svelte').Snippet }} */
 	let { title, subtitle, children } = $props();
 </script>
 

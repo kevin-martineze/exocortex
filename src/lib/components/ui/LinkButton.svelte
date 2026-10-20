@@ -1,4 +1,5 @@
 <script>
+	/** @type {{ onclick?: (e: MouseEvent) => void, children?: import('svelte').Snippet }} */
 	let { onclick, children } = $props();
 </script>
 

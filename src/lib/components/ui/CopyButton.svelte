@@ -3,6 +3,7 @@
 	import IconButton from './IconButton.svelte';
 	import Icon from './Icon.svelte';
 
+	/** @type {{ value: string, toast?: string, ariaLabel?: string }} */
 	let { value, toast = 'Contenido', ariaLabel } = $props();
 </script>
 

@@ -1,6 +1,7 @@
 <script>
 	import EmptyState from './EmptyState.svelte';
 
+	/** @type {{ items: { id: string, label: string }[], active?: string | null, mono?: boolean, empty?: string }} */
 	let { items, active = $bindable(), mono = false, empty = '' } = $props();
 </script>
 

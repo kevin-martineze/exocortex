@@ -2,6 +2,7 @@
 	import { MIN_SCALE, MAX_SCALE } from '#lib/utils/zoom';
 	import Icon from '../ui/Icon.svelte';
 
+	/** @type {{ scale: number, onzoomin: () => void, onzoomout: () => void, onreset: () => void }} */
 	let { scale, onzoomin, onzoomout, onreset } = $props();
 </script>
 

@@ -31,7 +31,7 @@ export function zoomAt(view, nextScale, px, py, width, height) {
 	return clampPan({ scale, x: px - (px - view.x) * ratio, y: py - (py - view.y) * ratio }, width, height);
 }
 
-/** @param {number} scale @returns {number} */
+/** @param {number} scale @returns {0 | 1 | 2} */
 export function detailLevel(scale) {
 	return scale >= LEVEL_2 ? 2 : scale >= LEVEL_1 ? 1 : 0;
 }

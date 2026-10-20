@@ -1,13 +1,16 @@
 <script>
 	import Button from './Button.svelte';
 
+	/** @type {{ label: string, items: { label: string, onselect: () => void }[] }} */
 	let { label, items } = $props();
 
 	let open = $state(false);
+	/** @type {HTMLElement | undefined} */
 	let wrapper;
 
 	$effect(() => {
 		if (!open) return;
+		/** @param {KeyboardEvent} e */
 		function onKeydown(e) {
 			if (e.key === 'Escape') open = false;
 		}
@@ -18,7 +21,7 @@
 
 <svelte:window
 	onclick={(e) => {
-		if (open && wrapper && !wrapper.contains(e.target)) open = false;
+		if (open && wrapper && e.target instanceof Node && !wrapper.contains(e.target)) open = false;
 	}}
 />
 

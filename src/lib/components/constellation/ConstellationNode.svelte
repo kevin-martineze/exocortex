@@ -4,6 +4,9 @@
 	import { formatShortDate } from '#lib/utils/format';
 	import { fade } from 'svelte/transition';
 
+	/** @typedef {import('#lib/domain/types.js').Project} Project */
+
+	/** @type {{ project: Project, selected?: boolean, variant?: number, onclick?: () => void, zoom?: number, level?: 0 | 1 | 2, animate?: boolean }} */
 	let {
 		project,
 		selected = false,
@@ -79,11 +82,11 @@
 					<span>{STATUS[project.status].label}{project.role ? ` · ${ROLES[project.role]}` : ''}</span>
 				</div>
 				<div class="meta-tags">
-					{#each (project.stack || []).slice(0, 3) as tag (tag)}
+					{#each project.stack.slice(0, 3) as tag (tag)}
 						<span class="tag">{tag}</span>
 					{/each}
-					{#if (project.stack || []).length > 3}
-						<span class="tag">+{(project.stack || []).length - 3}</span>
+					{#if project.stack.length > 3}
+						<span class="tag">+{project.stack.length - 3}</span>
 					{/if}
 				</div>
 			</div>

@@ -1,4 +1,5 @@
 <script>
+	/** @type {{ value?: string, type?: string, mono?: boolean } & import('svelte/elements').HTMLInputAttributes} */
 	let { value = $bindable(''), type = 'text', mono = false, ...rest } = $props();
 </script>
 

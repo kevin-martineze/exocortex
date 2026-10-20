@@ -1,4 +1,5 @@
 <script>
+	/** @type {{ href: string, label: string }} */
 	let { href, label } = $props();
 </script>
 

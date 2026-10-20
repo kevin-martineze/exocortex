@@ -1,4 +1,5 @@
 <script>
+	/** @type {{ name: 'search' | 'close' | 'copy' | 'fit', size?: number }} */
 	let { name, size = 15 } = $props();
 
 	const PATHS = {

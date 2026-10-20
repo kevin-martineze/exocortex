@@ -8,18 +8,22 @@
 	import IconButton from '../ui/IconButton.svelte';
 	import Icon from '../ui/Icon.svelte';
 
+	/** @typedef {import('#lib/domain/types.js').Project} Project */
+
+	/** @type {{ project: Project, onclose: () => void }} */
 	let { project, onclose } = $props();
 
 	let cluster = $derived(CLUSTERS[project.cluster]);
 	let status = $derived(STATUS[project.status]);
 
-	let firstEnv = $derived(project.environments?.find((e) => e.vars?.length));
+	let firstEnv = $derived(project.environments.find((e) => e.vars.length));
 	let varRows = $derived(firstEnv ? firstEnv.vars.slice(0, 2) : []);
 
 	function copyNotes() {
 		copyText(project.notes ?? '', 'Notas');
 	}
 	function copyEnv() {
+		if (!firstEnv) return;
 		copyText(envBlock(firstEnv), 'Archivo .env');
 	}
 </script>

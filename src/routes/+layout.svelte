@@ -3,6 +3,7 @@
 	import favicon from '#lib/assets/favicon.svg';
 	import Toast from '#lib/components/ui/Toast.svelte';
 
+	/** @type {{ children: import('svelte').Snippet }} */
 	let { children } = $props();
 </script>
 

@@ -1,4 +1,5 @@
 <script>
+	/** @type {{ side?: import('svelte').Snippet, children?: import('svelte').Snippet }} */
 	let { side, children } = $props();
 </script>
 

@@ -15,26 +15,32 @@
 
 	const edges = projectEdges(projects);
 
+	/** @type {import('#lib/domain/types.js').Project | null} */
 	let selected = $state(null);
 	let paletteOpen = $state(false);
 
+	/** @type {HTMLElement | undefined} */
 	let viewport;
 	let view = $state({ scale: 1, x: 0, y: 0 });
 	let animate = $state(false);
 	let dragging = $state(false);
 	let level = $derived(detailLevel(view.scale));
 
+	/** @type {Map<number, { x: number, y: number }>} */
 	const pointers = new Map();
 	let panStart = { x: 0, y: 0 };
 	let panStartView = { scale: 1, x: 0, y: 0 };
 	let pinchStart = { dist: 0, scale: 1 };
 
+	/** @param {{ x: number, y: number }} a @param {{ x: number, y: number }} b @returns {number} */
 	function dist(a, b) {
 		return Math.hypot(a.x - b.x, a.y - b.y);
 	}
 
+	/** @param {WheelEvent} e */
 	function onWheel(e) {
 		e.preventDefault();
+		if (!viewport) return;
 		animate = false;
 		const r = viewport.getBoundingClientRect();
 		const d = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY;
@@ -42,12 +48,16 @@
 	}
 
 	$effect(() => {
-		viewport.addEventListener('wheel', onWheel, { passive: false });
-		return () => viewport.removeEventListener('wheel', onWheel);
+		const el = viewport;
+		if (!el) return;
+		el.addEventListener('wheel', onWheel, { passive: false });
+		return () => el.removeEventListener('wheel', onWheel);
 	});
 
+	/** @param {PointerEvent} e */
 	function onPointerDown(e) {
-		if (e.target.closest('.node')) return;
+		if (e.target instanceof Element && e.target.closest('.node')) return;
+		if (!viewport) return;
 		animate = false;
 		pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
 		viewport.setPointerCapture(e.pointerId);
@@ -60,8 +70,10 @@
 		}
 	}
 
+	/** @param {PointerEvent} e */
 	function onPointerMove(e) {
 		if (!pointers.has(e.pointerId)) return;
+		if (!viewport) return;
 		pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
 		const r = viewport.getBoundingClientRect();
 		if (pointers.size === 1) {
@@ -82,6 +94,7 @@
 		}
 	}
 
+	/** @param {PointerEvent} e */
 	function onPointerUp(e) {
 		pointers.delete(e.pointerId);
 		if (pointers.size === 0) {
@@ -93,7 +106,9 @@
 		}
 	}
 
+	/** @param {number} f */
 	function zoomBy(f) {
+		if (!viewport) return;
 		const r = viewport.getBoundingClientRect();
 		animate = true;
 		view = zoomAt(view, view.scale * f, r.width / 2, r.height / 2, r.width, r.height);
@@ -109,6 +124,7 @@
 		view = { scale: 1, x: 0, y: 0 };
 	}
 
+	/** @param {KeyboardEvent} e */
 	function onKeydown(e) {
 		if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
 			e.preventDefault();
@@ -116,7 +132,7 @@
 			return;
 		}
 		if (paletteOpen || e.metaKey || e.ctrlKey || e.altKey) return;
-		if (e.target.closest?.('input, textarea, select, [contenteditable="true"]')) return;
+		if (e.target instanceof Element && e.target.closest('input, textarea, select, [contenteditable="true"]')) return;
 		if (e.key === '+' || e.key === '=') {
 			e.preventDefault();
 			zoomIn();

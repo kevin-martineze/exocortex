@@ -1,5 +1,6 @@
 <script>
 	// Posiciones pseudo-random pero deterministas (misma semilla = mismas estrellas).
+	/** @param {number} seed @returns {() => number} */
 	function mulberry32(seed) {
 		return function () {
 			seed |= 0;

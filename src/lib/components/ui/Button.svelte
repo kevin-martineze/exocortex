@@ -1,4 +1,5 @@
 <script>
+	/** @type {{ variant?: string, size?: string, block?: boolean, type?: 'button' | 'submit' | 'reset', href?: string, disabled?: boolean, onclick?: (e: MouseEvent) => void, children?: import('svelte').Snippet, [key: string]: unknown }} */
 	let {
 		variant = 'ghost',
 		size = 'md',

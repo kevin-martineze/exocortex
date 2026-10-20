@@ -5,12 +5,19 @@
 	import Badge from '../ui/Badge.svelte';
 	import Icon from '../ui/Icon.svelte';
 
+	/** @type {{ open?: boolean, onclose?: () => void }} */
 	let { open = false, onclose } = $props();
 
 	let query = $state('');
+	/** @type {HTMLInputElement | undefined} */
+	let input;
 	let results = $derived(
 		getProjects().filter((p) => p.title.toLowerCase().includes(query.trim().toLowerCase()))
 	);
+
+	$effect(() => {
+		if (open) input?.focus();
+	});
 </script>
 
 <Modal open={open} onclose={onclose}>
@@ -21,7 +28,7 @@
 				class="search-input"
 				type="text"
 				placeholder="Buscar proyectos…"
-				autofocus
+				bind:this={input}
 				bind:value={query}
 			/>
 		</div>

@@ -15,13 +15,7 @@
 	import NavList from '#lib/components/ui/NavList.svelte';
 	import Menu from '#lib/components/ui/Menu.svelte';
 
-	let project = $state(structuredClone(getProject(page.params.id)));
-
-	if (project) {
-		project.warnings ??= [];
-		project.dependencies ??= [];
-		project.checklist ??= [];
-	}
+	let project = $state(structuredClone(getProject(page.params.id ?? '')));
 
 	const TABS = [
 		{ id: 'docs', label: 'Docs' },
@@ -41,31 +35,33 @@
 	];
 
 	let activeTab = $state('docs');
-	let activeDocId = $state(project?.docs?.[0]?.id ?? null);
-	let activeFileId = $state(project?.codeFiles?.[0]?.id ?? null);
+	let activeDocId = $state(project?.docs[0]?.id ?? null);
+	let activeFileId = $state(project?.codeFiles[0]?.id ?? null);
 	let newEnvOpen = $state(false);
 	let newEnvName = $state('');
 	let warnOpen = $state(false);
 	let warnText = $state('');
 
 	let activeDoc = $derived(
-		project?.docs.find((d) => d.id === activeDocId) ?? project?.docs[0] ?? null
+		project ? (project.docs.find((d) => d.id === activeDocId) ?? project.docs[0] ?? null) : null
 	);
 	let activeFile = $derived(
-		project?.codeFiles.find((f) => f.id === activeFileId) ?? project?.codeFiles[0] ?? null
+		project ? (project.codeFiles.find((f) => f.id === activeFileId) ?? project.codeFiles[0] ?? null) : null
 	);
-	let docItems = $derived(project?.docs.map((d) => ({ id: d.id, label: d.title })) ?? []);
-	let codeItems = $derived(project?.codeFiles.map((f) => ({ id: f.id, label: f.path })) ?? []);
+	let docItems = $derived(project ? project.docs.map((d) => ({ id: d.id, label: d.title })) : []);
+	let codeItems = $derived(project ? project.codeFiles.map((f) => ({ id: f.id, label: f.path })) : []);
 	let notasMd = $derived(
-		(project?.bitacora ?? []).map((b) => `### ${b.date}\n\n${b.text}`).join('\n\n')
+		project ? project.bitacora.map((b) => `### ${b.date}\n\n${b.text}`).join('\n\n') : ''
 	);
-	let doneCount = $derived((project?.checklist ?? []).filter((c) => c.done).length);
+	let doneCount = $derived(project ? project.checklist.filter((c) => c.done).length : 0);
 
+	/** @param {string} tab */
 	function selectTab(tab) {
 		activeTab = tab;
 	}
 
 	function addEnv() {
+		if (!project) return;
 		const name = newEnvName.trim();
 		if (!name) return;
 		project.environments.push({ id: `env-${Date.now()}`, name, url: '', vars: [] });
@@ -74,6 +70,7 @@
 	}
 
 	function addWarning() {
+		if (!project) return;
 		const text = warnText.trim();
 		if (!text) return;
 		project.warnings.push({ id: `warn-${Date.now()}`, text });
@@ -173,7 +170,7 @@
 							<div class="env-card-head">
 								<h3 class="env-name">{env.name}</h3>
 								{#if env.url}<span class="mono muted">{env.url}</span>{/if}
-								{#if env.vars?.length}
+								{#if env.vars.length}
 									<Button
 										size="sm"
 										style="margin-left: auto"
@@ -183,7 +180,7 @@
 									</Button>
 								{/if}
 							</div>
-							{#if env.vars?.length}
+							{#if env.vars.length}
 								<div class="vars">
 									{#each env.vars as v (v.id)}
 										<div class="var-row">

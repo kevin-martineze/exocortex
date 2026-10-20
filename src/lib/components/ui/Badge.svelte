@@ -1,4 +1,5 @@
 <script>
+	/** @type {{ label: string, color?: string, dot?: boolean }} */
 	let { label, color = '#9a95a8', dot = true } = $props();
 </script>
 

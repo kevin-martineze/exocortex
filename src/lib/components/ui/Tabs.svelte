@@ -1,4 +1,5 @@
 <script>
+	/** @type {{ tabs: { id: string, label: string }[], active?: string }} */
 	let { tabs, active = $bindable() } = $props();
 </script>
 

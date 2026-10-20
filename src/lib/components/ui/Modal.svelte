@@ -1,8 +1,10 @@
 <script>
+	/** @type {{ open?: boolean, onclose?: () => void, children?: import('svelte').Snippet }} */
 	let { open = false, onclose, children } = $props();
 
 	$effect(() => {
 		if (!open) return;
+		/** @param {KeyboardEvent} e */
 		function onKeydown(e) {
 			if (e.key === 'Escape') onclose?.();
 		}
