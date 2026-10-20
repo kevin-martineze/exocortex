@@ -1,5 +1,5 @@
 <script>
-	/** @type {{ padding?: string, children?: import('svelte').Snippet, [key: string]: unknown }} */
+	/** @type {{ padding?: 'md' | 'lg', children?: import('svelte').Snippet, [key: string]: unknown }} */
 	let { padding = 'md', children, ...rest } = $props();
 </script>
 
