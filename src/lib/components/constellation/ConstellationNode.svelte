@@ -1,8 +1,7 @@
 <script>
-	import { CLUSTERS, STATUS, ROLES } from '#lib/domain/constants';
-	import { projectLoad, projectStats } from '#lib/domain/project';
-	import { formatShortDate } from '#lib/utils/format';
-	import { fade } from 'svelte/transition';
+	import { CLUSTERS } from '#lib/domain/constants';
+	import { projectLoad } from '#lib/domain/project';
+	import NodeDetail from './NodeDetail.svelte';
 
 	/** @typedef {import('#lib/domain/types.js').Project} Project */
 
@@ -20,7 +19,6 @@
 	let cluster = $derived(CLUSTERS[project.cluster]);
 	let accent = $derived(cluster.color);
 	let load = $derived(projectLoad(project));
-	let stats = $derived(projectStats(project));
 
 	// Misma fórmula que el prototipo: hasta 60% de blanco mezclado al tope de carga,
 	// un halo (box-shadow) que crece en blur/spread/alpha con la carga.
@@ -75,42 +73,7 @@
 		></span>
 		<span class="node-label" style:color={cluster.labelColor}>{project.title}</span>
 
-		{#if level >= 1}
-			<div class="meta" transition:fade={{ duration: 150 }}>
-				<div class="meta-status">
-					<span class="status-dot" style:background={STATUS[project.status].color}></span>
-					<span>{STATUS[project.status].label}{project.role ? ` · ${ROLES[project.role]}` : ''}</span>
-				</div>
-				<div class="meta-tags">
-					{#each project.stack.slice(0, 3) as tag (tag)}
-						<span class="tag">{tag}</span>
-					{/each}
-					{#if project.stack.length > 3}
-						<span class="tag">+{project.stack.length - 3}</span>
-					{/if}
-				</div>
-			</div>
-		{/if}
-
-		{#if level >= 2}
-			<div class="node-card" transition:fade={{ duration: 150 }}>
-				<div class="card-line">{stats.docs} docs · {stats.notas} notas · {stats.entornos} entornos · {stats.secretos} secretos</div>
-				{#if project.health}
-					<div class="card-line card-health">
-						<span class="health-dot" style:background={project.health.up ? '#7cc58f' : '#e06a6a'}></span>
-						<span>{project.health.up ? 'Operativo' : 'Caído'}{stats.warnings > 0 ? ` · ⚠ ${stats.warnings}` : ''}</span>
-					</div>
-				{/if}
-				{#if stats.checklistTotal > 0}
-					<div class="card-line">Checklist {stats.checklistDone}/{stats.checklistTotal}</div>
-				{/if}
-				{#if stats.lastEntry}
-					<div class="card-line card-last">
-						{formatShortDate(stats.lastEntry.date)} · {stats.lastEntry.text}
-					</div>
-				{/if}
-			</div>
-		{/if}
+		<NodeDetail {project} {level} />
 	</span>
 </button>
 
@@ -148,70 +111,6 @@
 		text-align: center;
 		line-height: 1.25;
 		white-space: nowrap;
-	}
-	.meta {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 4px;
-	}
-	.meta-status {
-		display: inline-flex;
-		align-items: center;
-		gap: 5px;
-		font-size: 11px;
-		color: var(--text-secondary);
-	}
-	.status-dot {
-		width: 7px;
-		height: 7px;
-		border-radius: 50%;
-	}
-	.meta-tags {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 4px;
-		justify-content: center;
-		max-width: 200px;
-	}
-	.tag {
-		font-size: 10.5px;
-		padding: 1px 6px;
-		border: 1px solid var(--border-panel);
-		border-radius: 999px;
-		background: var(--bg-panel);
-		color: var(--text-secondary);
-	}
-	.node-card {
-		display: flex;
-		flex-direction: column;
-		gap: 4px;
-		max-width: 260px;
-		padding: 10px 12px;
-		border-radius: var(--radius-md);
-		border: 1px solid var(--border-panel);
-		background: var(--bg-panel);
-		font-size: 11.5px;
-		color: var(--text-secondary);
-		text-align: left;
-	}
-	.card-line {
-		line-height: 1.4;
-	}
-	.card-health {
-		display: inline-flex;
-		align-items: center;
-		gap: 5px;
-	}
-	.health-dot {
-		width: 7px;
-		height: 7px;
-		border-radius: 50%;
-	}
-	.card-last {
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
 	}
 	.float-a {
 		animation: float-a 6s ease-in-out infinite;
