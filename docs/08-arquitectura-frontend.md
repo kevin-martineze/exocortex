@@ -155,6 +155,31 @@ No saben nada de proyectos ni de secretos. Cualquier botón, input o tarjeta de 
 9. **Imports por alias** `#lib/...`, nunca rutas relativas largas (`../../`).
 10. **Accesibilidad.** Todo botón solo-icono lleva `label`/`aria-label`; los diálogos llevan `role` y manejan Escape.
 
+## Tipos (JSDoc)
+
+El proyecto es JavaScript con `checkJs` activo. Los tipos se escriben en JSDoc y los verifica `svelte-check`.
+
+- **Tipos del dominio** en `lib/domain/types.js` (`@typedef`): `Project`, `Environment`, `Secret`, `Doc`, `BitacoraEntry`, `CodeFile`, `Command`, `QuickLink`, `Warning`, `Dependency`, `ChecklistItem`, `Health`, `Cluster`, `Status`, `Role`. Se importan con `/** @typedef {import('#lib/domain/types.js').Project} Project */`.
+- **Props de cada componente** tipadas en el `$props()`:
+  ```js
+  /** @type {{ label: string, color?: string, dot?: boolean }} */
+  let { label, color = '#9a95a8', dot = true } = $props();
+  ```
+  Una prop es obligatoria solo si el componente no funciona sin ella. Todo lo que tiene default es opcional (`?`). Los snippets se tipan con `import('svelte').Snippet`, y los callbacks como funciones (`() => void`, `(name: string) => void`).
+- **Datos normalizados.** Las listas de un proyecto siempre son arrays (pueden estar vacíos). La normalización ocurre al cargar los datos, no en cada componente con `?.`.
+- **Prohibido:** `any`, `@ts-ignore`, `@ts-expect-error` y `@ts-nocheck`.
+
+## Verificación
+
+Toda tarea del frontend termina con las dos verificaciones en verde:
+
+```bash
+pnpm check   # svelte-check: 0 errores y 0 warnings
+pnpm build
+```
+
+Además, cada pantalla que se toca se revisa en el navegador: el build no detecta los errores que solo aparecen en el cliente.
+
 ## Cómo agregar una pantalla o funcionalidad
 
 1. ¿Necesita datos nuevos? Primero va el método en `lib/api/` (en mock y en http), después el estado en `lib/state/` si se comparte entre pantallas.
@@ -169,7 +194,8 @@ La estructura anterior era la del prototipo: páginas monolíticas, componentes 
 
 | Fase | Alcance | Estado |
 |---|---|---|
-| 1 | Carpetas `domain/`, `utils/`, `data/` y `state/`; primitivas de `ui/`; limpieza de `app.css` | Pendiente |
+| 1 | Carpetas `domain/`, `utils/`, `data/` y `state/`; primitivas de `ui/`; limpieza de `app.css` | Hecha |
+| 1b | Tipos JSDoc del dominio y de las props; `pnpm check` en 0 | En curso |
 | 2 | `constellation/` + home delgada | Pendiente |
 | 3 | `project/` + páginas de proyecto delgadas | Pendiente |
 | 4 | `auth/` + `search/` + onboarding/unlock delgadas | Pendiente |
