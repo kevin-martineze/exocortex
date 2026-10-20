@@ -40,8 +40,8 @@
 	];
 
 	let activeTab = $state('docs');
-	let activeDocId = $state(project?.docs[0]?.id ?? null);
-	let activeFileId = $state(project?.codeFiles[0]?.id ?? null);
+	let activeDocId = $state(project?.docs?.[0]?.id ?? null);
+	let activeFileId = $state(project?.codeFiles?.[0]?.id ?? null);
 	let newEnvOpen = $state(false);
 	let newEnvName = $state('');
 	let warnOpen = $state(false);
