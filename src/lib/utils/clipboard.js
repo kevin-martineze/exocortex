@@ -1,4 +1,4 @@
-import { showToast } from './stores';
+import { showToast } from '#lib/state/toast.svelte.js';
 
 function fallbackCopy(text) {
 	const textarea = document.createElement('textarea');
@@ -32,10 +32,4 @@ export async function copyText(text, label = 'Contenido') {
 	}
 	showToast(ok ? `${label} copiado ✓` : 'No se pudo copiar');
 	return ok;
-}
-
-export function envBlock(environment) {
-	return (environment.vars || [])
-		.map((v) => `${v.key}=${v.value}`)
-		.join('\n');
 }

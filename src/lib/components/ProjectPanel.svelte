@@ -1,6 +1,7 @@
 <script>
-	import { copyText, envBlock } from '#lib/copy';
-	import { CLUSTERS, STATUS, ROLES } from '#lib/mockData';
+	import { copyText } from '#lib/utils/clipboard';
+	import { envBlock } from '#lib/domain/project';
+	import { CLUSTERS, STATUS, ROLES } from '#lib/domain/constants';
 	import Badge from './Badge.svelte';
 	import CopyButton from './CopyButton.svelte';
 

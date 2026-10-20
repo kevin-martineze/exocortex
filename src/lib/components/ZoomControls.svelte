@@ -1,5 +1,5 @@
 <script>
-	import { MIN_SCALE, MAX_SCALE } from '#lib/zoom';
+	import { MIN_SCALE, MAX_SCALE } from '#lib/utils/zoom';
 
 	let { scale, onzoomin, onzoomout, onreset } = $props();
 </script>

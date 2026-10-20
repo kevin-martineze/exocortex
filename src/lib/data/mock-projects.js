@@ -2,24 +2,6 @@
 // todo el contenido vive aquí por ahora. La forma sigue docs/06-modelo-datos.md,
 // extendida con commands / quickLinks / codeFiles que aún no están en ese doc.
 
-export const CLUSTERS = {
-	personal: { label: 'Personal', color: '#4fd1c5', labelColor: '#9ce8de' },
-	trabajo: { label: 'Trabajo formal', color: '#e0935a', labelColor: '#f0b98b' }
-};
-
-export const STATUS = {
-	activo: { label: 'Activo', color: '#7cc58f' },
-	pausado: { label: 'Pausado', color: '#8a8798' },
-	archivado: { label: 'Archivado', color: '#6b6680' }
-};
-
-export const ROLES = {
-	colaborador: 'Colaborador',
-	director: 'Director'
-};
-
-export const STACK_OPTIONS = ['Node', 'NestJS', 'Svelte', 'SvelteKit', 'React', 'MongoDB', 'PostgreSQL', 'Docker', 'Kafka', 'Python', 'Raspberry Pi', 'MQTT'];
-
 const projects = [
 	// ─── Cluster Personal ────────────────────────────────────────────────
 	{
@@ -470,36 +452,4 @@ export function getProjects() {
 
 export function projectsByCluster(cluster) {
 	return projects.filter((p) => p.cluster === cluster);
-}
-
-// Carga de contenido 0-10: proxy de docs + notas + secretos + entornos.
-// Determina el brillo del nodo en la constelación.
-export function projectLoad(project) {
-	const varCount = (project.environments || []).reduce(
-		(n, env) => n + (env.vars?.length || 0),
-		0
-	);
-	const total =
-		(project.docs?.length || 0) +
-		(project.bitacora?.length || 0) +
-		varCount +
-		(project.environments?.length || 0);
-	return Math.max(0, Math.min(10, total));
-}
-
-// Resumen para los niveles de detalle de la constelación.
-export function projectStats(project) {
-	const envs = project.environments || [];
-	const checklist = project.checklist || [];
-	const bitacora = [...(project.bitacora || [])].sort((a, b) => b.date.localeCompare(a.date));
-	return {
-		docs: project.docs?.length || 0,
-		notas: bitacora.length,
-		entornos: envs.length,
-		secretos: envs.reduce((n, e) => n + (e.vars?.length || 0), 0),
-		warnings: project.warnings?.length || 0,
-		checklistDone: checklist.filter((c) => c.done).length,
-		checklistTotal: checklist.length,
-		lastEntry: bitacora[0] ?? null
-	};
 }

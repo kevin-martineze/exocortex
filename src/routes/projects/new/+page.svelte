@@ -1,6 +1,6 @@
 <script>
 	import { goto } from '$app/navigation';
-	import { STACK_OPTIONS } from '#lib/mockData';
+	import { STACK_OPTIONS } from '#lib/domain/constants';
 	import Pill from '#lib/components/Pill.svelte';
 	import Chip from '#lib/components/Chip.svelte';
 

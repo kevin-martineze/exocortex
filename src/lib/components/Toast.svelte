@@ -1,9 +1,9 @@
 <script>
-	import { toast } from '#lib/stores';
+	import { toast } from '#lib/state/toast.svelte.js';
 </script>
 
-{#if $toast}
-	<div class="toast" role="status" aria-live="polite">{$toast}</div>
+{#if toast.message}
+	<div class="toast" role="status" aria-live="polite">{toast.message}</div>
 {/if}
 
 <style>

@@ -1,5 +1,7 @@
 <script>
-	import { CLUSTERS, projectLoad, projectStats, STATUS, ROLES } from '#lib/mockData';
+	import { CLUSTERS, STATUS, ROLES } from '#lib/domain/constants';
+	import { projectLoad, projectStats } from '#lib/domain/project';
+	import { formatShortDate } from '#lib/utils/format';
 	import { fade } from 'svelte/transition';
 
 	let {
@@ -101,7 +103,7 @@
 				{/if}
 				{#if stats.lastEntry}
 					<div class="card-line card-last">
-						{new Date(stats.lastEntry.date + 'T00:00:00').toLocaleDateString('es', { day: 'numeric', month: 'short' })} · {stats.lastEntry.text}
+						{formatShortDate(stats.lastEntry.date)} · {stats.lastEntry.text}
 					</div>
 				{/if}
 			</div>

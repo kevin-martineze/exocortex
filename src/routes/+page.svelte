@@ -1,6 +1,8 @@
 <script>
-	import { getProjects, CLUSTERS } from '#lib/mockData';
-	import { clampPan, zoomAt, detailLevel, STEP } from '#lib/zoom';
+	import { getProjects } from '#lib/data/mock-projects';
+	import { CLUSTERS } from '#lib/domain/constants';
+	import { projectEdges } from '#lib/domain/project';
+	import { clampPan, zoomAt, detailLevel, STEP } from '#lib/utils/zoom';
 	import Stars from '#lib/components/Stars.svelte';
 	import ConstellationNode from '#lib/components/ConstellationNode.svelte';
 	import ProjectPanel from '#lib/components/ProjectPanel.svelte';
@@ -9,26 +11,7 @@
 
 	const projects = getProjects();
 
-	// Líneas de conexión entre proyectos relacionados del mismo cluster (deduplicadas).
-	const edges = [];
-	const seen = new Set();
-	for (const p of projects) {
-		for (const relId of p.related || []) {
-			const other = projects.find((x) => x.id === relId);
-			if (!other) continue;
-			const key = [p.id, other.id].sort().join('--');
-			if (seen.has(key)) continue;
-			seen.add(key);
-			edges.push({
-				key,
-				x1: p.position.x,
-				y1: p.position.y,
-				x2: other.position.x,
-				y2: other.position.y,
-				color: CLUSTERS[p.cluster].color
-			});
-		}
-	}
+	const edges = projectEdges(projects);
 
 	let selected = $state(null);
 	let paletteOpen = $state(false);

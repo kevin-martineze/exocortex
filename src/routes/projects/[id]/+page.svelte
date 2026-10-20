@@ -1,7 +1,9 @@
 <script>
 	import { page } from '$app/state';
-	import { getProject, CLUSTERS, STATUS, ROLES } from '#lib/mockData';
-	import { copyText, envBlock } from '#lib/copy';
+	import { getProject } from '#lib/data/mock-projects';
+	import { CLUSTERS, STATUS, ROLES } from '#lib/domain/constants';
+	import { copyText } from '#lib/utils/clipboard';
+	import { envBlock } from '#lib/domain/project';
 	import Badge from '#lib/components/Badge.svelte';
 	import CopyButton from '#lib/components/CopyButton.svelte';
 

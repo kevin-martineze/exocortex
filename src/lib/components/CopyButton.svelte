@@ -1,5 +1,5 @@
 <script>
-	import { copyText } from '#lib/copy';
+	import { copyText } from '#lib/utils/clipboard';
 
 	let { value, toast = 'Contenido', ariaLabel } = $props();
 </script>
