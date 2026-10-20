@@ -1,11 +1,21 @@
 <script>
-	import { CLUSTERS, projectLoad } from '#lib/mockData';
+	import { CLUSTERS, projectLoad, projectStats, STATUS, ROLES } from '#lib/mockData';
+	import { fade } from 'svelte/transition';
 
-	let { project, selected = false, variant = 0, onclick } = $props();
+	let {
+		project,
+		selected = false,
+		variant = 0,
+		onclick,
+		zoom = 1,
+		level = 0,
+		animate = false
+	} = $props();
 
 	let cluster = $derived(CLUSTERS[project.cluster]);
 	let accent = $derived(cluster.color);
 	let load = $derived(projectLoad(project));
+	let stats = $derived(projectStats(project));
 
 	// Misma fórmula que el prototipo: hasta 60% de blanco mezclado al tope de carga,
 	// un halo (box-shadow) que crece en blur/spread/alpha con la carga.
@@ -42,9 +52,12 @@
 	type="button"
 	class="node"
 	class:paused={project.status === 'pausado'}
+	class:animate={animate}
 	aria-label={`${project.title}, ${cluster.label}${project.role ? ', ' + project.role : ''}, carga ${load} de 10`}
 	style:left={project.position.x + '%'}
 	style:top={project.position.y + '%'}
+	style:transform={`translate(-50%, -${radius}px) scale(${1 / zoom})`}
+	style:transform-origin={`50% ${radius}px`}
 	onclick={onclick}
 >
 	<span class="float {floatClass}">
@@ -56,17 +69,56 @@
 			style:box-shadow={shadow}
 		></span>
 		<span class="label" style:color={cluster.labelColor}>{project.title}</span>
+
+		{#if level >= 1}
+			<div class="meta" transition:fade={{ duration: 150 }}>
+				<div class="meta-status">
+					<span class="status-dot" style:background={STATUS[project.status].color}></span>
+					<span>{STATUS[project.status].label}{project.role ? ` · ${ROLES[project.role]}` : ''}</span>
+				</div>
+				<div class="meta-tags">
+					{#each (project.stack || []).slice(0, 3) as tag (tag)}
+						<span class="tag">{tag}</span>
+					{/each}
+					{#if (project.stack || []).length > 3}
+						<span class="tag">+{(project.stack || []).length - 3}</span>
+					{/if}
+				</div>
+			</div>
+		{/if}
+
+		{#if level >= 2}
+			<div class="card" transition:fade={{ duration: 150 }}>
+				<div class="card-line">{stats.docs} docs · {stats.notas} notas · {stats.entornos} entornos · {stats.secretos} secretos</div>
+				{#if project.health}
+					<div class="card-line card-health">
+						<span class="health-dot" style:background={project.health.up ? '#7cc58f' : '#e06a6a'}></span>
+						<span>{project.health.up ? 'Operativo' : 'Caído'}{stats.warnings > 0 ? ` · ⚠ ${stats.warnings}` : ''}</span>
+					</div>
+				{/if}
+				{#if stats.checklistTotal > 0}
+					<div class="card-line">Checklist {stats.checklistDone}/{stats.checklistTotal}</div>
+				{/if}
+				{#if stats.lastEntry}
+					<div class="card-line card-last">
+						{new Date(stats.lastEntry.date + 'T00:00:00').toLocaleDateString('es', { day: 'numeric', month: 'short' })} · {stats.lastEntry.text}
+					</div>
+				{/if}
+			</div>
+		{/if}
 	</span>
 </button>
 
 <style>
 	.node {
 		position: absolute;
-		transform: translate(-50%, -50%);
 		background: none;
 		padding: 0;
 		display: block;
 		cursor: pointer;
+	}
+	.node.animate {
+		transition: transform 200ms ease;
 	}
 	.node.paused {
 		opacity: 0.55;
@@ -91,5 +143,68 @@
 		text-align: center;
 		line-height: 1.25;
 		white-space: nowrap;
+	}
+	.meta {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 4px;
+	}
+	.meta-status {
+		display: inline-flex;
+		align-items: center;
+		gap: 5px;
+		font-size: 11px;
+		color: var(--text-secondary);
+	}
+	.status-dot {
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+	}
+	.meta-tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 4px;
+		justify-content: center;
+		max-width: 200px;
+	}
+	.tag {
+		font-size: 10.5px;
+		padding: 1px 6px;
+		border: 1px solid var(--border-panel);
+		border-radius: 999px;
+		color: var(--text-secondary);
+	}
+	.card {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+		max-width: 220px;
+		padding: 10px 12px;
+		border-radius: var(--radius-md);
+		border: 1px solid var(--border-panel);
+		background: color-mix(in srgb, var(--bg-panel) 85%, transparent);
+		font-size: 11.5px;
+		color: var(--text-secondary);
+		text-align: left;
+	}
+	.card-line {
+		line-height: 1.4;
+	}
+	.card-health {
+		display: inline-flex;
+		align-items: center;
+		gap: 5px;
+	}
+	.health-dot {
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+	}
+	.card-last {
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 </style>

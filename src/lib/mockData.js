@@ -486,3 +486,20 @@ export function projectLoad(project) {
 		(project.environments?.length || 0);
 	return Math.max(0, Math.min(10, total));
 }
+
+// Resumen para los niveles de detalle de la constelación.
+export function projectStats(project) {
+	const envs = project.environments || [];
+	const checklist = project.checklist || [];
+	const bitacora = [...(project.bitacora || [])].sort((a, b) => b.date.localeCompare(a.date));
+	return {
+		docs: project.docs?.length || 0,
+		notas: bitacora.length,
+		entornos: envs.length,
+		secretos: envs.reduce((n, e) => n + (e.vars?.length || 0), 0),
+		warnings: project.warnings?.length || 0,
+		checklistDone: checklist.filter((c) => c.done).length,
+		checklistTotal: checklist.length,
+		lastEntry: bitacora[0] ?? null
+	};
+}
