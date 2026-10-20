@@ -37,6 +37,7 @@
  *   checklist: ChecklistItem[],
  *   health: Health | null
  * }} Project
+ * @typedef {{ title: string, cluster: Cluster, role: Role | null, status: Status, stack: string[], links: ProjectLinks }} ProjectDraft
  * @typedef {{ key: string, x1: number, y1: number, x2: number, y2: number, color: string }} Edge
  */
 

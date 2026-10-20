@@ -1,10 +1,15 @@
 <script>
-	/** @type {{ checked?: boolean, strike?: boolean, children?: import('svelte').Snippet }} */
-	let { checked = $bindable(false), strike = false, children } = $props();
+	/** @type {{ checked?: boolean, strike?: boolean, onchange?: (checked: boolean) => void, children?: import('svelte').Snippet }} */
+	let { checked = $bindable(false), strike = false, onchange, children } = $props();
+
+	/** @param {Event} e */
+	function handleChange(e) {
+		onchange?.(e.currentTarget instanceof HTMLInputElement ? e.currentTarget.checked : false);
+	}
 </script>
 
 <label class="checkbox">
-	<input type="checkbox" bind:checked />
+	<input type="checkbox" bind:checked onchange={handleChange} />
 	<span class:done={strike && checked}>{@render children?.()}</span>
 </label>
 

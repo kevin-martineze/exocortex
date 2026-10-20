@@ -23,3 +23,22 @@ export const ROLES = {
 
 /** @type {string[]} */
 export const STACK_OPTIONS = ['Node', 'NestJS', 'Svelte', 'SvelteKit', 'React', 'MongoDB', 'PostgreSQL', 'Docker', 'Kafka', 'Python', 'Raspberry Pi', 'MQTT'];
+
+/** @type {{ id: string, label: string }[]} */
+export const PROJECT_TABS = [
+	{ id: 'docs', label: 'Docs' },
+	{ id: 'env', label: 'Variables de entorno' },
+	{ id: 'code', label: 'Preview de código' },
+	{ id: 'deploy', label: 'Deploy' },
+	{ id: 'notas', label: 'Notas' },
+	{ id: 'comandos', label: 'Comandos y enlaces' }
+];
+
+/** @type {{ label: string, tab: string }[]} */
+export const ADD_CONTENT_ITEMS = [
+	{ label: 'Variable de entorno', tab: 'env' },
+	{ label: 'Documento (Markdown)', tab: 'docs' },
+	{ label: 'Nota de bitácora', tab: 'notas' },
+	{ label: 'Comando frecuente', tab: 'comandos' },
+	{ label: 'Enlace rápido', tab: 'comandos' }
+];

@@ -40,6 +40,12 @@ export function envBlock(environment) {
 	return environment.vars.map((v) => `${v.key}=${v.value}`).join('\n');
 }
 
+// Bitácora completa como Markdown, para copiar al portapapeles.
+/** @param {BitacoraEntry[]} entries @returns {string} */
+export function bitacoraMarkdown(entries) {
+	return entries.map((b) => `### ${b.date}\n\n${b.text}`).join('\n\n');
+}
+
 // Líneas de conexión entre proyectos relacionados del mismo cluster (deduplicadas).
 /** @param {Project[]} projects @returns {Edge[]} */
 export function projectEdges(projects) {
