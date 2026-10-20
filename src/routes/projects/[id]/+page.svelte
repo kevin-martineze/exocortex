@@ -4,8 +4,8 @@
 	import { CLUSTERS, STATUS, ROLES } from '#lib/domain/constants';
 	import { copyText } from '#lib/utils/clipboard';
 	import { envBlock } from '#lib/domain/project';
-	import Badge from '#lib/components/Badge.svelte';
-	import CopyButton from '#lib/components/CopyButton.svelte';
+	import Badge from '#lib/components/ui/Badge.svelte';
+	import CopyButton from '#lib/components/ui/CopyButton.svelte';
 
 	let project = $state(structuredClone(getProject(page.params.id)));
 

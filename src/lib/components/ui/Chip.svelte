@@ -1,39 +1,38 @@
 <script>
-	let { label, selected = false, color = 'var(--accent-personal)', onclick } = $props();
+	let { label, selected = false, onclick } = $props();
 </script>
 
 <button
 	type="button"
-	class="pill"
+	class="chip"
 	class:selected
 	aria-pressed={selected}
-	style:--pill-color={color}
 	onclick={onclick}
 >
 	{label}
 </button>
 
 <style>
-	.pill {
+	.chip {
 		display: inline-flex;
 		align-items: center;
-		padding: 9px 16px;
-		border-radius: var(--radius-md);
+		padding: 6px 13px;
+		border-radius: 999px;
 		border: 1px solid var(--border-input);
 		background: var(--bg-ghost);
 		color: var(--text-secondary);
-		font-size: 14px;
+		font-size: 13px;
 		font-weight: 500;
 		transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
 	}
-	.pill:hover {
-		border-color: #433e61;
+	.chip:hover {
+		border-color: var(--border-hover);
 		color: var(--text-primary);
 	}
-	.pill.selected {
-		background: color-mix(in srgb, var(--pill-color) 16%, transparent);
-		border-color: var(--pill-color);
-		color: var(--pill-color);
+	.chip.selected {
+		background: color-mix(in srgb, var(--accent-personal) 16%, transparent);
+		border-color: var(--accent-personal);
+		color: var(--accent-personal);
 		font-weight: 600;
 	}
 </style>

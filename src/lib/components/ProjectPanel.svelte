@@ -2,8 +2,8 @@
 	import { copyText } from '#lib/utils/clipboard';
 	import { envBlock } from '#lib/domain/project';
 	import { CLUSTERS, STATUS, ROLES } from '#lib/domain/constants';
-	import Badge from './Badge.svelte';
-	import CopyButton from './CopyButton.svelte';
+	import Badge from './ui/Badge.svelte';
+	import CopyButton from './ui/CopyButton.svelte';
 
 	let { project, onclose } = $props();
 

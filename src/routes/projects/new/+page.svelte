@@ -1,8 +1,8 @@
 <script>
 	import { goto } from '$app/navigation';
 	import { STACK_OPTIONS } from '#lib/domain/constants';
-	import Pill from '#lib/components/Pill.svelte';
-	import Chip from '#lib/components/Chip.svelte';
+	import Pill from '#lib/components/ui/Pill.svelte';
+	import Chip from '#lib/components/ui/Chip.svelte';
 
 	let title = $state('');
 	let cluster = $state('personal');

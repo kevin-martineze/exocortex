@@ -1,6 +1,6 @@
 <script>
 	import { goto } from '$app/navigation';
-	import CopyButton from '#lib/components/CopyButton.svelte';
+	import CopyButton from '#lib/components/ui/CopyButton.svelte';
 
 	const RECOVERY_CODE = 'XQ7K-9F2M-PLR4-7TZD-88CY';
 

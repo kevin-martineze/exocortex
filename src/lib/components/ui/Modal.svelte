@@ -12,8 +12,9 @@
 </script>
 
 {#if open}
-	<div class="backdrop" onclick={onclose}>
-		<div class="modal" role="dialog" aria-modal="true" onclick={(e) => e.stopPropagation()}>
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
+	<div class="backdrop" role="presentation" onclick={onclose}>
+		<div class="modal" role="dialog" aria-modal="true" tabindex="-1" onclick={(e) => e.stopPropagation()}>
 			{@render children?.()}
 		</div>
 	</div>
