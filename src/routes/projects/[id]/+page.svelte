@@ -7,6 +7,7 @@
 	import Badge from '#lib/components/ui/Badge.svelte';
 	import CopyButton from '#lib/components/ui/CopyButton.svelte';
 	import Button from '#lib/components/ui/Button.svelte';
+	import Card from '#lib/components/ui/Card.svelte';
 	import Input from '#lib/components/ui/Input.svelte';
 	import Checkbox from '#lib/components/ui/Checkbox.svelte';
 	import Tabs from '#lib/components/ui/Tabs.svelte';
