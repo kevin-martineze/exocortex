@@ -1,9 +1,8 @@
 <script>
 	import { copyText } from '#lib/utils/clipboard';
 	import { envBlock } from '#lib/domain/project';
-	import { CLUSTERS, STATUS, ROLES } from '#lib/domain/constants';
-	import Badge from '../ui/Badge.svelte';
-	import CopyButton from '../ui/CopyButton.svelte';
+	import ProjectBadges from './ProjectBadges.svelte';
+	import SecretRow from './SecretRow.svelte';
 	import Button from '../ui/Button.svelte';
 	import IconButton from '../ui/IconButton.svelte';
 	import Icon from '../ui/Icon.svelte';
@@ -12,9 +11,6 @@
 
 	/** @type {{ project: Project, onclose: () => void }} */
 	let { project, onclose } = $props();
-
-	let cluster = $derived(CLUSTERS[project.cluster]);
-	let status = $derived(STATUS[project.status]);
 
 	let firstEnv = $derived(project.environments.find((e) => e.vars.length));
 	let varRows = $derived(firstEnv ? firstEnv.vars.slice(0, 2) : []);
@@ -39,14 +35,7 @@
 			</span>
 		</div>
 		<div class="badges">
-			<Badge label={cluster.label} color={cluster.color} />
-			{#if project.role}
-				<Badge label={ROLES[project.role]} />
-			{/if}
-			<Badge label={status.label} color={status.color} />
-			{#if project.locked}
-				<Badge label="Bloqueado" color="#e06a6a" />
-			{/if}
+			<ProjectBadges {project} />
 		</div>
 	</header>
 
@@ -56,11 +45,7 @@
 			{#if varRows.length}
 				<div class="vars">
 					{#each varRows as v (v.id)}
-						<div class="var-row">
-							<span class="key mono">{v.key}</span>
-							<span class="value mono">••••••••••</span>
-							<CopyButton value={v.value} toast="Variable de entorno" ariaLabel={`Copiar ${v.key}`} />
-						</div>
+						<SecretRow secret={v} compact />
 					{/each}
 				</div>
 				<Button block onclick={copyEnv}>Copiar todo el .env</Button>
@@ -121,9 +106,6 @@
 		flex-shrink: 0;
 	}
 	.badges {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 6px;
 		margin-top: 12px;
 	}
 	.body {
@@ -144,29 +126,6 @@
 		flex-direction: column;
 		gap: 8px;
 		margin-bottom: 14px;
-	}
-	.var-row {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		background: var(--bg-input);
-		border: 1px solid var(--border-input);
-		border-radius: var(--radius-sm);
-		padding: 8px 10px;
-	}
-	.key {
-		flex: 1;
-		min-width: 0;
-		font-size: 12.5px;
-		color: var(--text-primary);
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-	}
-	.value {
-		font-size: 12.5px;
-		color: var(--text-very-faint);
-		letter-spacing: 1px;
 	}
 	.notes {
 		white-space: pre-line;
